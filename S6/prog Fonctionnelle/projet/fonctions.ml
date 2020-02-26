@@ -44,18 +44,25 @@ let rec successeurs graphe sommet =
 ;;
 (*successeurs graphe1 3;;*)
 
+(*retourne le 2eme element de la liste*)
+let sec liste=
+	match liste with
+		[x;y;_]	-> y
+		|[x]	-> []
+;;
 
 (*retire les elements de l2 à l1*)
 (* val retirer : 'a list -> 'a list -> 'a list = <fun> *)
 let rec retirer l1 l2 =
 	match l1 with
-	| (x::r) -> if List.mem x l2
+	(x::r) 	-> 	if List.mem x l2
 				then retirer r l2
 				else x::retirer r l2
-	| []     -> []
+	| []   	-> []
 ;;
 
 
+(* PARCOURS PREFIXE
 (* parcours en profondeur *)
 let parcours_profondeur graphe =
 	let rec parcours_interne sommet dejaVisite pasEncoreVisite =
@@ -69,9 +76,45 @@ let parcours_profondeur graphe =
 								(retirer (succs@pasEncoreVisite) (num::dejaVisite))	(* alors on ajoute ses successeurs qui ne sont pas dans " déjà visité " dans " pas encore visité "*)
 								(*on retire le sommet actuel de ceux pasEncoreVisités*)
 							else parcours_interne
-								(List.hd(retirer pasEncoreVisite dejaVisite),successeurs graphe (List.hd(retirer pasEncoreVisite dejaVisite))) (*on visite le prochain element de pas encore visité *)
-								dejaVisite (*on ajoute le sommet actuel dans la liste de ceux déjà visités*)
-								(retirer pasEncoreVisite dejaVisite)	(* alors on ajoute ses successeurs qui ne sont pas dans " déjà visité " dans " pas encore visité "*)
-								(*on retire le sommet actuel de ceux pasEncoreVisités*)
+								(List.hd(retirer pasEncoreVisite dejaVisite),successeurs graphe (List.hd(retirer pasEncoreVisite dejaVisite)))
+								dejaVisite
+								(retirer pasEncoreVisite dejaVisite)
 	in parcours_interne (racine graphe) [] [numSommet (racine graphe)]
+;;
+FIN PARCOURS PREFIXE *)
+
+(*
+3 fonctions :
+    1 parcours_profondeur graphe -> effectue un parcours en profondeur sur le graphe
+    2 parcours_suffixe dejaTraite,pasEncoreVisite -> parcours suffixe tq tous les sommets de graphe ne sont pas traite
+    3 traiter sommet,dejaTraite,graphe -> traite le sommet s'il n'est pas dans dejaTraite
+*)
+let rec traiter (num,succs) dejaTraite graphe =
+    if not(List.mem num dejaTraite)
+    then List.fold_left(fun resultat numSommet -> (traiter (List.find numSommet graphe) (num::resultat) graphe ))
+	                    dejaTraite
+	                    succs
+    else dejaTraite
+;;
+
+
+let parcours_profondeur graphe =
+	let rec parcours_suffixe dejaTraite=
+	    (* on a fini une fois que tous les sommets ont été visités*)
+	    if((retirer (liste_sommets graphe) dejaTraite)=[])
+	    then []
+	   (*sinon, on traite la composante connexe suivante *)
+	    else parcours_suffixe (traiter (List.find( (* on cherche dans le graphe le sommet associé au numero du sommet à traiter*)
+	                                        sec (retirer (liste_sommets graphe) dejaTraite)) (* récupére le numero du prochain sommet à traiter*)
+	                                        graphe
+	                                       )
+										parcours_suffixe(traiter (List.find(
+									                                   List.hd(retirer (liste_sommets graphe) dejaTraite))
+									                                   graphe
+									                                   )
+														dejaTraite
+														graphe
+														)
+										graphe
+								)
 ;;
