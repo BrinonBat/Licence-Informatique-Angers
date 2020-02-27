@@ -87,7 +87,7 @@ FIN PARCOURS PREFIXE *)
 (*
 3 fonctions :
     1 parcours_profondeur graphe -> effectue un parcours en profondeur sur le graphe
-    2 parcours_suffixe dejaTraite,pasEncoreVisite -> parcours suffixe tq tous les sommets de graphe ne sont pas traite
+    2 parcours_suffixe dejaTraite -> effectue des parcours suffixe tq tous les sommets de graphe ne sont pas traite
     3 traiter sommet,dejaTraite,graphe -> traite le sommet s'il n'est pas dans dejaTraite
 *)
 let rec traiter (num,succs) dejaTraite graphe =
@@ -120,3 +120,5 @@ let parcours_profondeur graphe =
 								)
 	in parcours_suffixe []
 ;;
+
+(*parcours_profondeur graphe1 doit retourner - : int list = [2; 4; 3; 1; 8; 6; 7; 5]*)
