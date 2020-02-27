@@ -63,6 +63,11 @@ let rec retirer l1 l2 =
 ;;
 
 
+let rec retourne_sommet numSommet graphe=
+	match graphe with
+		((num,listSucc)::reste)	-> if (numSommet=num) then (num,listeSucc) else retourne_sommet numSommet reste
+		|_						-> failwith " sommet non existant dans le graphe"
+;;
 (* PARCOURS PREFIXE
 (* parcours en profondeur *)
 let parcours_profondeur graphe =
@@ -84,20 +89,25 @@ let parcours_profondeur graphe =
 ;;
 FIN PARCOURS PREFIXE *)
 
+let rec retourne_sommet numSommet graphe=
+	match graphe with
+		((num,listSucc)::reste)	-> if (numSommet=num) then (num,listSucc) else retourne_sommet numSommet reste
+		|_						-> failwith " sommet non existant dans le graphe"
+;;
+
 (*
 3 fonctions :
     1 parcours_profondeur graphe -> effectue un parcours en profondeur sur le graphe
-    2 parcours_suffixe dejaTraite -> effectue des parcours suffixe tq tous les sommets de graphe ne sont pas traite
+    2 parcours_suffixe dejaTraite,pasEncoreVisite -> parcours suffixe tq tous les sommets de graphe ne sont pas traite
     3 traiter sommet,dejaTraite,graphe -> traite le sommet s'il n'est pas dans dejaTraite
 *)
 let rec traiter (num,succs) dejaTraite graphe =
     if not(List.mem num dejaTraite)
-    then List.fold_left(fun resultat numSommet -> (traiter (List.find numSommet graphe) (num::resultat) graphe ))
+    then List.fold_left(fun resultat numSommet -> (traiter (retourne_sommet numSommet graphe) (num::resultat) graphe ))
 	                    dejaTraite
 	                    succs
     else dejaTraite
 ;;
-
 
 let parcours_profondeur graphe =
 	let rec parcours_suffixe dejaTraite=
@@ -105,14 +115,15 @@ let parcours_profondeur graphe =
 	    if((retirer (liste_sommets graphe) dejaTraite)=[])
 	    then []
 	   (*sinon, on traite la composante connexe suivante *)
-	    else parcours_suffixe (traiter (List.find( (* on cherche dans le graphe le sommet associé au numero du sommet à traiter*)
-	                                        sec (retirer (liste_sommets graphe) dejaTraite)) (* récupére le numero du prochain sommet à traiter*)
-	                                        graphe
-	                                       )
-										parcours_suffixe(traiter (List.find(
+	    else parcours_suffixe (traiter (retourne_sommet( (* on cherche dans le graphe le sommet associé au numero du sommet à traiter*)
+	                                        	sec (retirer (liste_sommets graphe) dejaTraite)) (* récupére le numero du prochain sommet à traiter*)
+									   			graphe
+	                              		)
+										(* on prends le résultat du parcours suivant comme étant la liste traitée*)
+										parcours_suffixe(traiter (retourne_sommet(
 									                                   List.hd(retirer (liste_sommets graphe) dejaTraite))
 									                                   graphe
-									                                   )
+									                             )
 														dejaTraite
 														graphe
 														)
