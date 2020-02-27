@@ -49,6 +49,7 @@ let sec liste=
 	match liste with
 		[x;y;_]	-> y
 		|[x]	-> []
+		|_      -> failwith "liste invalide"
 ;;
 
 (*retire les elements de l2 à l1*)
@@ -117,4 +118,5 @@ let parcours_profondeur graphe =
 														)
 										graphe
 								)
+	in parcours_suffixe []
 ;;
