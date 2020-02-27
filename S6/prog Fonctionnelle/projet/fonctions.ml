@@ -108,7 +108,7 @@ let rec traiter (num,succs) dejaTraite graphe =
 	                    succs
     else dejaTraite
 ;;
-
+(*
 let parcours_profondeur graphe =
 	let rec parcours_suffixe dejaTraite=
 	    (* on a fini une fois que tous les sommets ont été visités*)
@@ -131,12 +131,12 @@ let parcours_profondeur graphe =
 								)
 	in parcours_suffixe []
 ;;
-(*
+*)
 let parcours_profondeurBis graphe =
 	let parcours_suffixe dejaTraite=
 	   (*sinon, on traite la composante connexe suivante *)
 		List.fold_left (fun liDejaTraite sommet -> traiter liDejaTraite sommet graphe) List.hd(graphe) dejaTraite
 	in parcours_suffixe []
 ;;
- *)
+
 (*parcours_profondeur graphe1 doit retourner - : int list = [2; 4; 3; 1; 8; 6; 7; 5]*)
