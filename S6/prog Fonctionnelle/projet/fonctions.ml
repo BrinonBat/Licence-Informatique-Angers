@@ -135,19 +135,18 @@ parcours_profondeur (inverse_graphe graphe1);; (*- : int list = [7; 1; 5; 6; 8; 
 
 (*prends un numero de sommet et la liste du parcoursInverse en paramètre*)
 (*cherche la composante connexe associé à ce numero de sommet*)
-(*val traite_composante_connexe : 'a -> 'a list -> 'a list = <fun>   *)
+(*val traite_composante_connexe : 'a -> 'a list -> 'a list = <fun>  *)
 let rec traite_composante_connexe nSommet liParcoursInverse =
 	match liParcoursInverse with
 		(num::(suivant::(reste)))	-> if(num=nSommet)
 									 	then num::(traite_composante_connexe suivant (suivant::reste))
-										else traite_composante_connexe suivant (suivant::reste)
-		|(num::reste)				-> if(num=nSommet)
-									 	then num
+										else traite_composante_connexe nSommet (suivant::reste)
+		|(num::_)				-> if(num=nSommet)
+									 	then [num]
 										else []
 		|[]							-> []
-		|_							-> failwith " parcours invalide"
 ;;
-
+(*val connexites : (int * int list) list -> int list list = <fun> *)
 let connexites graphe=
 	let rec liste_composantes liParcours liParcoursInverse=
 		match liParcours with
