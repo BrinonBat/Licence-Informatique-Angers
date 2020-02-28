@@ -24,6 +24,7 @@ let parcours_profondeur graphe =
     2 parcours_suffixe dejaTraite,pasEncoreVisite -> parcours suffixe tq tous les sommets de graphe ne sont pas traite
     3 traiter sommet,dejaTraite,graphe -> traite le sommet s'il n'est pas dans dejaTraite
 *)
+(*malheureusement, on n'a pas conservé le "traiter" correspondant *)
 let parcours_profondeur graphe =
 	let rec parcours_suffixe dejaTraite=
 	    (* on a fini une fois que tous les sommets ont été visités*)
