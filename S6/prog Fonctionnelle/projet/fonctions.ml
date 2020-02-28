@@ -11,14 +11,13 @@ let graphe1 = [
 	(8, [6;7])
 ];;
 
-(*retourne la liste des sommets*)
+(*retourne la liste des sommets du graphe en paramètre*)
 (* val liste_sommets : ('a * 'b) list -> 'a list = <fun> *)
 let rec liste_sommets graphe =
 	match graphe with
 	| ((num,_)::suite) -> num::(liste_sommets suite)
 	| ([])             -> []
 ;;
-	(*cas du dernier sommet*)
 
 (* retourne le premier sommet du graphe*)
 (* val racine : ('a * 'b) list -> 'a * 'b = <fun> *)
@@ -104,3 +103,63 @@ let parcours_profondeur graphe =
 
 (*parcours_profondeur graphe1 doit retourner - : int list = [2; 4; 3; 1; 8; 6; 7; 5]*)
 parcours_profondeur graphe1;;
+
+(* parcours le graphe en listant les sommets pointant vers celui passé en paramètre*)
+(*val liste_peres : 'a * 'b -> ('c * 'a list) list -> 'c list = <fun>*)
+let rec liste_peres sommet graphe =
+	match graphe with
+		((num,succs)::reste)-> if List.mem (numSommet sommet) succs (*si le sommet traité fait parti des successeurs du sommet actuel*)
+									then num::(liste_peres sommet reste) (*alors on ajout le sommet actuel à la liste*)
+									else liste_peres sommet reste (* sinon, on poursuit juste la fonction*)
+		|[]					-> [] (*fin quand on arrive en bout de liste*)
+;;
+
+(*val inverse_graphe : ('a * 'a list) list -> ('a * 'a list) list = <fun> *)
+let inverse_graphe graphe=
+	(**)
+	let rec inverse_sommets aTraiter=
+		match aTraiter with
+			((num,succs)::reste)->(num,(liste_peres (num,succs) graphe))::(inverse_sommets reste)
+			|[]					-> []
+	in inverse_sommets graphe
+;;
+(*inverse_graphe graphe1 doit retourner
+- : (int * int list) list =[(1, [2; 5]); (2, [3]); (3, [4]); (4, [2]); (5, [4; 6]); (6, [1; 8]); (7, [1; 6; 8]); (8, [1])*)
+inverse_graphe graphe1;;
+
+parcours_profondeur (inverse_graphe graphe1);; (*- : int list = [7; 1; 5; 6; 8; 2; 3; 4]*)
+
+(*on prends le 1er element du parcours en profondeur*)
+(* on le trouve dans la liste du parcours du graphe inverse*)
+(*on prends les elements qui suivent. Ils font parti de la composante connexe associée*)
+
+(*prends un numero de sommet et la liste du parcoursInverse en paramètre*)
+(*cherche la composante connexe associé à ce numero de sommet*)
+(*val traite_composante_connexe : 'a -> 'a list -> 'a list = <fun>   *)
+let rec traite_composante_connexe nSommet liParcoursInverse =
+	match liParcoursInverse with
+		(num::(suivant::(reste)))	-> if(num=nSommet)
+									 	then num::(traite_composante_connexe suivant (suivant::reste))
+										else traite_composante_connexe suivant (suivant::reste)
+		|(num::reste)				-> if(num=nSommet)
+									 	then num
+										else []
+		|[]							-> []
+		|_							-> failwith " parcours invalide"
+;;
+
+let connexites graphe=
+	let rec liste_composantes liParcours liParcoursInverse=
+		match liParcours with
+			(x::r)	-> (liste_composantes (*on réitére mais sans les sommets traités*)
+										(retirer liParcours (traite_composante_connexe x liParcoursInverse))
+										(retirer liParcoursInverse (traite_composante_connexe x liParcoursInverse))
+						)
+						@ (* on concatènes avec la liste résultant du traitement*)
+					[traite_composante_connexe x liParcoursInverse]
+			|[] 	-> [] (*cas de fin*)
+	in liste_composantes (parcours_profondeur graphe) (parcours_profondeur (inverse_graphe graphe1))
+;;
+(*)	List.fold_right
+					List.hd(parcours_profondeur graphe)
+					((parcours_profondeur (inverse_graphe graphe)),[]) *)

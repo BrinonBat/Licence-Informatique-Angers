@@ -38,7 +38,7 @@ let rec inverserSuccesseurs graphe listeSommets =	match graphe with
 
 
 (*inverse graphe*)
-let inverser graphe = inverserSuccesseurs graphe (sommets graphe);;
+let inverser graphe = inverserSuccesseurs graphe (liste_sommets graphe);;
 (*inverser graphe1;;*)
 
 
