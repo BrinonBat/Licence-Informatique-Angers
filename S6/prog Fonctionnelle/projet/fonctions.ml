@@ -76,28 +76,31 @@ let rec retourne_sommet numSommet graphe=
 (*val concaten : 'a list * 'b list -> 'a list * 'b list -> 'a list * 'b list = <fun> *)
 let concaten (l1,l2) (l1add,l2add)=((l1@l1add),(l2@l2add));;
 
-(*effectue un parcours en profondeur suffixe à partir du sommet saisi en paramètre*)
+(*effectue un parcours en profondeur suffixe du sous-graphe correspondant au sommet saisi en paramètre*)
 (*liLock est une liste des sommets parcourus et donc à ne pas re-traiter*)
 (*val traiter :  'a * 'a list -> 'a list * 'a list -> ('a * 'a list) list -> 'a list * 'a list = <fun> *)
 let rec traiter (num,succs) (liLock,resultat) graphe =
-    if not(List.mem num liLock)
-    then concaten   ([],[num])
+    if not(List.mem num liLock) (*traitement si le sommet n'a pas déjà été traité*)
+    then concaten   ([],[num]) (*on ajout le sommet actuel au début de la liste résultat*)
+					(*on fait un parcours en profondeur sur les successeurs du sommet actuel*)
                     (List.fold_left(fun (liLock,resultat) numSommet -> (traiter
-                                                        (retourne_sommet numSommet graphe)
-                                                        (liLock,(resultat))
+                                                        (retourne_sommet numSommet graphe) (*selection du sommet à traiter*)
+                                                        (liLock,resultat)
                                                         graphe)
                                     )
-	                                (liLock@[num],resultat)
-	                                succs)
-    else (liLock,resultat)
+	                                (liLock@[num],resultat)(*ajout du sommet actuel à ceux traités*)
+	                                succs) (*parcours des successeurs*)
+    else (liLock,resultat) (*si le sommet à déjà été traité, on l'ignore*)
 ;;
-
+(* parcours en profondeur suffixe du graphe*)
+(*val parcours_profondeur : ('a * 'a list) list -> 'a list = <fun>*)
 let parcours_profondeur graphe =
-	let retourne_resultat (liLock,resultat)=resultat
+	let retourne_resultat (liLock,resultat)=resultat (* on extrait le résultt du couple obtenu*)
+	(*on effecture un parcours en profondeur sur TOUS les sommets. Cette étape permet de traiter les differents sous-graphe*)
 	in retourne_resultat (List.fold_left (fun (liLock,resultat) sommet -> traiter sommet (liLock,resultat) graphe)
 		                ([],[])
 		                graphe)
 ;;
 
-parcours_profondeur graphe1;;
 (*parcours_profondeur graphe1 doit retourner - : int list = [2; 4; 3; 1; 8; 6; 7; 5]*)
+parcours_profondeur graphe1;;
