@@ -159,6 +159,3 @@ let connexites graphe=
 			|[] 	-> [] (*cas de fin*)
 	in liste_composantes (parcours_profondeur graphe) (parcours_profondeur (inverse_graphe graphe1))
 ;;
-(*)	List.fold_right
-					List.hd(parcours_profondeur graphe)
-					((parcours_profondeur (inverse_graphe graphe)),[]) *)
