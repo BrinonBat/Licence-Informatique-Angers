@@ -1,3 +1,5 @@
+Projet réalisé par Baptiste Brinon et Christopher Loughran
+
 fonctions.ml contient le code de la partie " Algo 1 "
 projet.ml contient le code de la partie " Algo 2"
 
