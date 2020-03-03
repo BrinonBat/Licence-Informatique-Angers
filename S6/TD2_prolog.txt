@@ -1,0 +1,9 @@
+1)Définir le prédicat rang_pair d'arité 2 qui est tel que rang_pair(L1,L2) est vrai si L2 est la liste des éléments de rang pair de la liste L1
+
+2)Définir le prédicat insertion d'arité 2 qui est  tel que insertion(L1,X,L2) est vrai si L2 est le résultat de l'insertion (n'importe où) de X dans la liste L1
+
+3) Définir le prédicat membre d'arité 2 qui est tel que membre (X,L) est  vrai si X est un élément de la liste L
+
+4)Définir le prédicat prefixe d'arité 2 qui est tel que prefixe (L,LL) est  vrai si la liste L est un préfixe de la liste LL
+
+5)Définir le prédicat suffixe d'arité 2 qui est tel que suffixe (L_,LL_) est vrai si la liste L_ est suffixe de la liste LL_
