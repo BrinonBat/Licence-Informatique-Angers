@@ -2,6 +2,12 @@
 
 2)Définir le prédicat insertion d'arité 2 qui est  tel que insertion(L1,X,L2) est vrai si L2 est le résultat de l'insertion (n'importe où) de X dans la liste L1
 
+	?insertion ([a,b],1,R)
+	R=[1,a,b];
+	R=[a,1,b];
+	R=[a,b,1];
+	False
+
 3) Définir le prédicat membre d'arité 2 qui est tel que membre (X,L) est  vrai si X est un élément de la liste L
 
 4)Définir le prédicat prefixe d'arité 2 qui est tel que prefixe (L,LL) est  vrai si la liste L est un préfixe de la liste LL
