@@ -60,7 +60,7 @@ class Neural_network_binary_classif(th.nn.Module):
         phi1 = torch.sigmoid(self.layer1(x))
         phi2 = torch.sigmoid(self.layer2(phi1))
         phi3 = torch.sigmoid(self.layer3(phi2))
-        return torch.sigmoid(self.layer4(phi3))
+        return torch.sigmoid(self.layer4(phi3)).view(-1)
 
 
 #7) creation d'un réseau de neurones avec deux couches cachées de taille 200 et 100
