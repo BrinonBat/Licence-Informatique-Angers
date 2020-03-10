@@ -8,7 +8,7 @@ rang_pair([_],[]).
 insertion([_|L1],X,[_|L2]):-insertion(L1,X,L2).
 insertion(L,X,[X|L]).
 
-%3) 
+%3)
 membre(X,[_|L]):-membre(X,L).
 membre(X,[X|_]).
 
@@ -21,5 +21,5 @@ suffixe(L_,[_X|LL_]) :- suffixe(L_,LL_).
 suffixe(L,L).
 
 %6) pas  corrigé
-permute([X|L],[??]):- premute(L,P).
+permute([X|L],[??]):- permute(L,P).
 permute([],[]).
