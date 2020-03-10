@@ -1,0 +1,14 @@
+Définir le prédicat conc d'arité 3 qui est tel que conc (L,L_,LL_) est vrai si LL_ est la concaténation des liste L et L_
+
+Définir le prédicat partage d'arité 3 qui est tel que partage (LL_,L,L_) est vrai si les listes L et L_ sont le résultat du partage sur alternativement L puis L_ de la liste LL_
+
+En supposant l'existence de la définition (inf_st(x,y):-x<y):
+	Définir le prédicat place d'arité 3 qui est tel que place (X,L,LX) est vrai si la liste LX est le résultat de l'insertion de X selon l'ordre inf_st dans la liste L déjà triée.
+	Définir le prédicat dpeda d'arité 5 (pour "de part et d'autre") qui est tel que dpeda (P,L,PPP,EP,PGD) est vrai si PPP(resp.EP,PGD) est la liste des éléments de la liste L plus petit (resp. egaux,plus grands) que P.
+
+Définir le prédicat fusion d'arité 3 qui est tel que Fusion(T,T_,TT_) est vrai si la liste TT_ est le résultat de la fusion des listes triées T et T_
+
+En déduire:
+	-le tri par insertion
+	-le tri "quick" par pivot
+	-le tri par fusion
