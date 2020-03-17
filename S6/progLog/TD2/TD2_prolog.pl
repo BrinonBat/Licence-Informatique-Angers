@@ -21,5 +21,5 @@ suffixe(L_,[_X|LL_]) :- suffixe(L_,LL_).
 suffixe(L,L).
 
 %6) pas  corrigé
-permute([X|L],[??]):- permute(L,P).
+permute([X|L],[P|X]):- permute(L,P).
 permute([],[]).
