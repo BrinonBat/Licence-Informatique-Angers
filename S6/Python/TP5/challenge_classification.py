@@ -19,16 +19,16 @@ y=labels.values
 d = X.shape[1]
 
 
-#2) fonction qui calcule les prédictions (0 ou 1) à partir des sorties du modèle
+#2) fonction qui calcule les predictions (0 ou 1) a partir des sorties du modele
 def prediction(f):
     return f.round()
 
-#3) Fonction qui calcule le taux d'erreur en comparant les y prédits avec les y réels
+#3) Fonction qui calcule le taux d'erreur en comparant les y predits avec les y reels
 def error_rate(y_pred,y):
     return ((y_pred != y).sum().float())/y_pred.size()[0]
 
 
-#5) Séparation aléatoire du dataset en ensemble d'apprentissage (70%) et de test (30%)
+#5) Separation aleatoire du dataset en ensemble d'apprentissage (70%) et de test (30%)
 indices = np.random.permutation(X.shape[0])
 training_idx, test_idx = indices[:int(X.shape[0]*0.7)], indices[int(X.shape[0]*0.7):]
 X_train = X[training_idx,:]
@@ -38,10 +38,10 @@ X_test = X[test_idx,:]
 y_test = y[test_idx]
 
 
-#6) Création du modèle de régression logistique multivarié. Il étend la classe th.nn.Module de la librairie Pytorch
+#6) Creation du modele de regression logistique multivarie. Il etend la classe th.nn.Module de la librairie Pytorch
 class Neural_network_binary_classif(th.nn.Module):
 
-    # Constructeur qui initialise le modèle
+    # Constructeur qui initialise le modele
     def __init__(self,d,h1,h2,h3,h4):
         super(Neural_network_binary_classif, self).__init__()
 
@@ -55,7 +55,7 @@ class Neural_network_binary_classif(th.nn.Module):
         self.layer3.reset_parameters()
         self.layer4.reset_parameters()
 
-    # Implémentation de la passe forward du modèle
+    # Implementation de la passe forward du modele
     def forward(self, x):
         phi1 = torch.sigmoid(self.layer1(x))
         phi2 = torch.sigmoid(self.layer2(phi1))
@@ -63,17 +63,17 @@ class Neural_network_binary_classif(th.nn.Module):
         return torch.sigmoid(self.layer4(phi3)).view(-1)
 
 
-#7) creation d'un réseau de neurones avec deux couches cachées de taille 200 et 100
+#7) creation d'un reseau de neurones avec deux couches cachees de taille 200 et 100
 nnet = Neural_network_binary_classif(d,400,200,200,200)
 
-#8) Spécification du materiel utilisé device = "cpu" pour du calcul CPU, device = "cuda:0" pour du calcul sur le device GPU "cuda:0".
-device = "cuda:0"
+#8) Specification du materiel utilise device = "cpu" pour du calcul CPU, device = "cuda:0" pour du calcul sur le device GPU "cuda:0".
+device = "cpu"
 
-#9) Chargement du modèle sur le matériel choisi
+#9) Chargement du modele sur le materiel choisi
 nnet = nnet.to(device)
 
 
-#10) Conversion des données en tenseurs Pytorch et envoi sur le device
+#10) Conversion des donnees en tenseurs Pytorch et envoi sur le device
 X_train = th.from_numpy(X_train).float().to(device)
 y_train = th.from_numpy(y_train).float().to(device)
 y_train = y_train[:,0]
@@ -85,12 +85,12 @@ y_test = y_test[:,0]
 #11) Taux d'apprentissage (learning rate)
 eta = 0.15
 
-#12) Définition du critère de Loss. Ici binary cross entropy pour un modèle de classification avec deux classes
+#12) Definition du critere de Loss. Ici binary cross entropy pour un modele de classification avec deux classes
 criterion = th.nn.BCELoss()
 
-# optim.SGD Correspond à la descente de gradient standard.
+# optim.SGD Correspond a la descente de gradient standard.
 # Il existe d'autres types d'optimizer dans la librairie Pytorch
-# Le plus couramment utilisé est optim.Adam
+# Le plus couramment utilise est optim.Adam
 optimizer = optim.SGD(nnet.parameters(), lr=eta)
 
 # tqdm permet d'avoir une barre de progression
@@ -98,7 +98,7 @@ nb_epochs = 100000
 pbar = tqdm(range(nb_epochs))
 
 for i in pbar:
-    # Remise à zéro des gradients
+    # Remise a zero des gradients
     optimizer.zero_grad()
 
     f_train = nnet(X_train)
@@ -106,7 +106,7 @@ for i in pbar:
     # Calculs des gradients
     loss.backward()
 
-    # Mise à jour des poids du modèle avec l'optimiseur choisi et en fonction des gradients calculés
+    # Mise a jour des poids du modele avec l'optimiseur choisi et en fonction des gradients calcules
     optimizer.step()
 
     if (i % 1000 == 0):
