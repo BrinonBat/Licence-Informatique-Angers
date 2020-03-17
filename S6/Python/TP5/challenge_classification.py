@@ -94,7 +94,7 @@ criterion = th.nn.BCELoss()
 optimizer = optim.SGD(nnet.parameters(), lr=eta)
 
 # tqdm permet d'avoir une barre de progression
-nb_epochs = 100000
+nb_epochs = 4000
 pbar = tqdm(range(nb_epochs))
 
 for i in pbar:
@@ -109,7 +109,7 @@ for i in pbar:
     # Mise a jour des poids du modele avec l'optimiseur choisi et en fonction des gradients calcules
     optimizer.step()
 
-    if (i % 1000 == 0):
+    if (i % 100 == 0):
 
         y_pred_train = prediction(f_train)
 
