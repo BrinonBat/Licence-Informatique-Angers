@@ -1,0 +1,20 @@
+On désire gérer des arbres binaires de recherche. Un arbre binaire est
+
+    soit un arbre vide
+    soit un triplet constitué de la racine, du fils droit et du fils gauche ; les fils droits et gauches étant eux-mêmes des arbres binaires.
+
+Un arbre binaire est dit arbre binaire de recherche si pour chacun de ses sous-arbres, le fils gauche et tous ses descendants ont une valeur inférieure strictement à la racine, le fils droit et tous ses descendants ont une valeur supérieure strictement à la racine. L'arbre vide sera représenté par la constante abvide. Un arbre non vide sera de la forme ab(symbole, sous_arbreg, sous_arbred). Où symbole sera un entier (nous ne manipulerons ici que des arbres binaires de recherche contenant des entiers), sous_arbreg et sous_arbred seront des arbres. Définir les prédicats suivants :
+
+    est_vide(A) vrai si A est vide
+    racine(A,R), gauche(A,G) et droit(A,G) qui permettent d'obtenir respectivement la racine, le sous-arbre gauche et le sous-arbre droit d'un arbre A.
+    ajout(X,A,Res) ajoute (si nécessaire) l'entier X au bon endroit dans l'arbre A pour donner l'arbre Res,
+    ajoutliste(L,A,Res) ajoute successivement les entiers de la liste L dans l'arbre A pour donner l'arbre Res. Testez en insérant successivement 6, 2, 8, 1 et 7 dans un arbre initialement vide. Créez un prédicat arbre(A) vrai pour cet arbre.
+    appartient(X,A) vérifie si X appartient à l'arbre A. Testez si 3 appartient à l'arbre de la question précédente. Puis testez pour 2.
+    nbnoeuds(A,N) : N est le nombre de noeuds de A. Combien y a-t-il de noeuds dans l'arbre de la question 4.
+    hauteur(A,H) : H est la hauteur de A. Quelle est la hauteur de l'arbre de la question 4 ?
+    profondeur(A,X,P) : P est la profondeur de X dans A. Quelle est la profondeur de 1 dans l'arbre de la question 4 ?
+    parcours_prefixe (A,L), L est la liste des entiers de l'arbre selon l'ordre préfixe. Quelle est la liste obtenue en parcourant l'arbre de la question 4 selon l'ordre préfixe ?
+    parcours_infixe (A,L), L est la liste des entiers de l'arbre selon l'ordre infixe. Quelle est la liste obtenue en parcourant l'arbre de la question 4 selon l'ordre infixe ?
+    parcours_postfixe (A,L), L est la liste des entiers de l'arbre selon l'ordre postfixe. Quelle est la liste obtenue en parcourant l'arbre de la question 4 selon l'ordre postfixe ?
+    plus_grand(A,X) où X est le plus grand entier de l'arbre, c'est-à-dire l'entier le plus à droite. Quel est le plus grand élément de l'arbre de la question 4?
+    supprimer(A,X,Res), Res est l'arbre de A dans lequel on a supprimé X. La suppression d'un élément X entraîne la remontée du plus grand élément du sous-arbre gauche de X à la place de X. Test : insérez 3, 4, et 5 dans l'arbre de la question 4, puis supprimez 8. Toujours sur l'arbre de la question 4 auquel on a inséré 3, 4, et 5 supprimez 6.
