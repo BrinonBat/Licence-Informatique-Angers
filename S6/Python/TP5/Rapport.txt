@@ -1,0 +1,25 @@
+Le travail à été fait sur mon ordinateur perso, donc j'ai dû limiter à 4000 le nb d'epochs pour que la durée de chaque test soit correcte.
+Le taux d'apprentissage à été augmenté en fonction, et l'affichage se réinitialise toutes les 10 epochs.
+
+1) D'abord, on doit tester differents optimizer:
+utilisation de la configuration suivante:
+	4000 epochs, 0.5 eta (car nombre d'epochs faible), reseau->51,400,200,200,50
+
+	SGD:[10:46<00:00,  6.19it/s, error_test=0.342, error_train=0.285, iter=3990, loss=0.559]
+	ASGD: [10:45<00:00,  6.19it/s, error_test=0.295, error_train=0.365, iter=3990, loss=0.586]
+	Adadelta:[09:56<00:00,  6.71it/s, error_test=0.253, error_train=0.252, iter=3990, loss=0.495] <- meilleur actuel ( ~75% réussite )
+	Adagrad: [10:36<00:00,  6.29it/s, error_test=0.48, error_train=0.48, iter=3990, loss=0.692]
+	Adam: [09:25<00:00,  7.08it/s, error_test=0.505, error_train=0.474, iter=3990, loss=0.703]
+	AdamW:[17:10<00:00,  3.88it/s, error_test=0.488, error_train=0.523, iter=3990, loss=0.729] <- supposé être le meilleur, mais est le pire. Probablement cas de surapprentissage dû à l'eta élevé
+
+2) puis on essaye differents eta:
+
+on fixe l'eta à 0.10 plutot que 0.50 :
+	ancien pire : AdamW: [21:07<00:00,  3.16it/s, error_test=0.491, error_train=0.476, iter=3990, loss=0.692] ( -1%)
+	ancien meilleur : Adadelta: [09:27<00:00,  7.05it/s, error_test=0.261, error_train=0.256, iter=3990, loss=0.512] ( -1% )
+
+eta à 0.8:
+	ancien pire : AdamW:
+	ancien meilleur : Adadelta:[10:19<00:00,  6.46it/s, error_test=0.285, error_train=0.265, iter=3990, loss=0.512]
+eta à 0.02:
+3) puis on selectionne un reseau correct :

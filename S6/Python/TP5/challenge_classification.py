@@ -64,7 +64,7 @@ class Neural_network_binary_classif(th.nn.Module):
 
 
 #7) creation d'un reseau de neurones avec deux couches cachees de taille 200 et 100
-nnet = Neural_network_binary_classif(d,400,200,200,200)
+nnet = Neural_network_binary_classif(d,400,200,200,50)
 
 #8) Specification du materiel utilise device = "cpu" pour du calcul CPU, device = "cuda:0" pour du calcul sur le device GPU "cuda:0".
 device = "cpu"
@@ -83,7 +83,7 @@ y_test = th.from_numpy(y_test).float().to(device)
 y_test = y_test[:,0]
 
 #11) Taux d'apprentissage (learning rate)
-eta = 0.15
+eta = 0.80
 
 #12) Definition du critere de Loss. Ici binary cross entropy pour un modele de classification avec deux classes
 criterion = th.nn.BCELoss()
@@ -91,7 +91,7 @@ criterion = th.nn.BCELoss()
 # optim.SGD Correspond a la descente de gradient standard.
 # Il existe d'autres types d'optimizer dans la librairie Pytorch
 # Le plus couramment utilise est optim.Adam
-optimizer = optim.SGD(nnet.parameters(), lr=eta)
+optimizer = optim.Adadelta(nnet.parameters(), lr=eta)
 
 # tqdm permet d'avoir une barre de progression
 nb_epochs = 4000
@@ -109,7 +109,7 @@ for i in pbar:
     # Mise a jour des poids du modele avec l'optimiseur choisi et en fonction des gradients calcules
     optimizer.step()
 
-    if (i % 100 == 0):
+    if (i % 10 == 0):
 
         y_pred_train = prediction(f_train)
 
