@@ -16,7 +16,7 @@ sommets_rec([sommet(E, _) | L], [E|S]) :- sommets_rec(L, S).
 
 
 membre(X, [X | _]).
-membre(X, [_ | L]) :- membre(X, L). 
+membre(X, [_ | L]) :- membre(X, L).
 
 successeurs(S, graphe(L), Succ_S) :- membre(sommet(S, Succ_S), L).
 
@@ -61,9 +61,9 @@ tri_topologique(G, O) :- \+graphevide(G), predecesseurs(S, G, []), ote_sommet(S,
 
 %predecesseurs2(E, graphe(S, A), Pred) :- suppr_sommets(E, S), suppr_arcs(E, A).
 
-%suppr_sommets(E, [E | L]) 
+%suppr_sommets(E, [E | L])
 
-
+%1) CHEMIN/4
 chemin(U, U, _G, [U]).
 chemin(U, V, G, [U | L]) :- U \= V, successeurs(U, G, SuccU), chemin_rec(G, V, SuccU, L).
 
@@ -71,20 +71,17 @@ chemin_rec(G, V, [X | _Succ], [X | L]) :- chemin(X, V, G, [X | L]).
 chemin_rec(G, V, [_X | Succ], L) :- chemin_rec(G, V, Succ, L).
 
 
-
+%2) CYCLES/3
 cycles(S, G, LC) :- successeurs(S, G, SuccS), cycles_rec(S, G, SuccS, LC).
 
 cycles_rec(_S, _G, [], []).
 cycles_rec(S, G, [X | SuccS], [C | LC]) :- chemin(X, S, G, C), cycles_rec(S, G, SuccS, LC).
 
-
+%3) CYCLES/2
 cycles_II(G, LC) :- sommets(G, Som), cycles_II_rec(G, Som, LC).%, flatten(LLC, LC).
 
 cycles_II_rec(_G, [], []).
 cycles_II_rec(G,  [X | Som], [C | LC]) :- cycles(X, G, C), cycles_II_rec(G, Som, LC).
 
-
-
-
-
-
+%4) CFC/2
+cfc(G,CFC) :- 
