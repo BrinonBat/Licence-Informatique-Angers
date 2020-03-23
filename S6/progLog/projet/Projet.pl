@@ -86,5 +86,5 @@ cycles_II_rec(G,  [X | Som], [C | LC]) :- cycles(X, G, C), cycles_II_rec(G, Som,
 %4) CFC/2
 cfc(G,CFC):- sommets(G,Som), cfc_rec(G,Som,CFC).
 
-cfc_rec(G,_,_)
-cfc_rec(G,Som,CFC) :-
+cfc_rec(G,_,_).
+%cfc_rec(G,Som,CFC) :-
