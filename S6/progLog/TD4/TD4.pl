@@ -78,8 +78,7 @@ supprime(X, ab(X, G, abvide), G).
 supprime(X, ab(X, G, D), ab(Y, G_, D)) :-
      D = ab(_, _, _),
      plus_grand(G, Y),
-     supprime(Y, G, G_). % Ici l'astuce est de réutiliser supprime pour
-supprimer le plus grand du sous-arbre gauche et le remonter
+     supprime(Y, G, G_). % Ici l'astuce est de réutiliser supprime pour supprimer le plus grand du sous-arbre gauche et le remonter
 supprime(X, ab(Y, G, D), ab(Y, G_, D)) :-
      X < Y,
      supprime(X, G, G_).
