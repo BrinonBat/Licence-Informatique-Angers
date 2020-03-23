@@ -1,7 +1,7 @@
 % 1. En se basant sur la librairie pour les graphes orientés développée
-en TP définir le prédicat chemin qui est tel que chemin(U,V,G,C) est
-vrai si C est un chemin (la liste des nœuds du graphe G) menant du
-sommet U au sommet V.
+%en TP définir le prédicat chemin qui est tel que chemin(U,V,G,C) est
+%vrai si C est un chemin (la liste des nœuds du graphe G) menant du
+%sommet U au sommet V.
 
 % Exemple :
 %% ?- G =
@@ -26,9 +26,9 @@ sommet(..., ...)]),
 %% false.
 
 % 2. Définir le prédicat cycles/3 qui est tel que cycles(S,G,LC) est
-vrai si LC est l'ensemble des cycles du graphe G contenant S. (Que l'on
-déduira du prédicat chemin ci-dessus en allant lire la partie sur les
-prédicats ensemblistes du cours « extralogique ».)
+%vrai si LC est l'ensemble des cycles du graphe G contenant S. (Que l'on
+%déduira du prédicat chemin ci-dessus en allant lire la partie sur les
+%prédicats ensemblistes du cours « extralogique ».)
 
 % Exemple :
 %% ?- G =
@@ -40,9 +40,9 @@ graphe([sommet(a,[b]),sommet(b,[e,c,f]),sommet(c,[d,g]),sommet(d,[c,h]),sommet(e
 %% false.
 
 % 3. Définir le prédicat cycles/2 qui est tel que cycles(G,LC) est vrai
-si LC est l'ensemble des cycles d'un graphe G. (On fera comme pour la
-question 2 mais la liste résultat contiendra des doublons, à une
-permutation près, qu'il faudra éliminer.)
+%si LC est l'ensemble des cycles d'un graphe G. (On fera comme pour la
+%question 2 mais la liste résultat contiendra des doublons, à une
+%permutation près, qu'il faudra éliminer.)
 
 % Exemple :
 %% ?- G =
@@ -53,21 +53,21 @@ graphe([sommet(a,[b]),sommet(b,[e,c,f]),sommet(c,[d,g]),sommet(d,[c,h]),sommet(e
 %% LC = [[d,c],[d,h],[e,a,b],[g,f]] ;
 %% false.
 
-% En théorie des graphes, une composante fortement connexe d'un graphe
-orienté G est un sous-graphe de G possédant la propriété suivante, et
-qui est maximal pour cette propriété : pour tout couple (u, v) de nœuds
-dans ce sous-graphe, il existe un chemin de u à v. [Wikipedia]
+%En théorie des graphes, une composante fortement connexe d'un graphe
+%orienté G est un sous-graphe de G possédant la propriété suivante, et
+%qui est maximal pour cette propriété : pour tout couple (u, v) de nœuds
+%dans ce sous-graphe, il existe un chemin de u à v. [Wikipedia]
 
 % 4. Déduire du prédicat cycles/2 le prédicat cfc/2 qui est tel que
-cfc(G,CFC) est vrai si la CFC est la liste des composantes fortement
-connexes du graphe G.
+%cfc(G,CFC) est vrai si la CFC est la liste des composantes fortement
+%connexes du graphe G.
 
 % 5. L'algorithme de Tarjan calcule aussi les composantes fortement
-connexes d'un graphe mais réalise un parcours optimisé des nœuds. Il est
-en cela beaucoup moins naïf et beaucoup plus efficace que celui spécifié
-précédemment. Définir un nouveau prédicat tarjan/2 qui calcule selon
-l'algorithme de Tarjan les composantes fortement connexes d'un graphe
-orienté.
+%connexes d'un graphe mais réalise un parcours optimisé des nœuds. Il est
+%en cela beaucoup moins naïf et beaucoup plus efficace que celui spécifié
+%précédemment. Définir un nouveau prédicat tarjan/2 qui calcule selon
+%l'algorithme de Tarjan les composantes fortement connexes d'un graphe
+%orienté.
 
 %% ?- G =
 graphe([sommet(a,[b]),sommet(b,[e,c,f]),sommet(c,[d,g]),sommet(d,[c,h]),sommet(e,[a,f]),sommet(f,[g]),sommet(g,[f]),sommet(h,[d,g])]),
