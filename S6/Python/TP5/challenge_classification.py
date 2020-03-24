@@ -9,26 +9,20 @@ from torch.nn import functional as F
 import torch
 import pandas as pd
 
-
+########################### initialisation #####################################
 datas=pd.get_dummies(pd.read_csv("bank_train_data.csv",sep=","))
 labels=pd.read_csv("bank_train_labels.csv")
-
 X=datas.values
 y=labels.values
-
 d = X.shape[1]
 
-
-#2) fonction qui calcule les predictions (0 ou 1) a partir des sorties du modele
 def prediction(f):
     return f.round()
 
-#3) Fonction qui calcule le taux d'erreur en comparant les y predits avec les y reels
 def error_rate(y_pred,y):
     return ((y_pred != y).sum().float())/y_pred.size()[0]
 
-
-#5) Separation aleatoire du dataset en ensemble d'apprentissage (70%) et de test (30%)
+# Separation aleatoire du dataset en ensemble d'apprentissage (70%) et de test (30%)
 indices = np.random.permutation(X.shape[0])
 training_idx, test_idx = indices[:int(X.shape[0]*0.7)], indices[int(X.shape[0]*0.7):]
 X_train = X[training_idx,:]
@@ -37,11 +31,9 @@ y_train = y[training_idx]
 X_test = X[test_idx,:]
 y_test = y[test_idx]
 
-
-#6) Creation du modele de regression logistique multivarie. Il etend la classe th.nn.Module de la librairie Pytorch
+######################## Creation du reseau de neurones. #######################
 class Neural_network_binary_classif(th.nn.Module):
 
-    # Constructeur qui initialise le modele
     def __init__(self,d,h1,h2,h3,h4):
         super(Neural_network_binary_classif, self).__init__()
 
@@ -55,61 +47,57 @@ class Neural_network_binary_classif(th.nn.Module):
         self.layer3.reset_parameters()
         self.layer4.reset_parameters()
 
-    # Implementation de la passe forward du modele
     def forward(self, x):
         phi1 = torch.sigmoid(self.layer1(x))
         phi2 = torch.sigmoid(self.layer2(phi1))
         phi3 = torch.sigmoid(self.layer3(phi2))
         return torch.sigmoid(self.layer4(phi3)).view(-1)
 
-
-#7) creation d'un reseau de neurones avec deux couches cachees de taille 200 et 100
 nnet = Neural_network_binary_classif(d,400,200,200,50)
 
-#8) Specification du materiel utilise device = "cpu" pour du calcul CPU, device = "cuda:0" pour du calcul sur le device GPU "cuda:0".
-device = "cpu"
+# Taux d'apprentissage (learning rate)
+eta = 0.001
 
-#9) Chargement du modele sur le materiel choisi
-nnet = nnet.to(device)
+###################### chargement des donnees ##################################
+
+# pas besoin de creer de variable device permettant de choisir entre CPU et cuda, ma machine ne disposant pas de cuda le choix par defaut est "cpu"
+
+# Chargement du modele sur le cpu
+nnet = nnet.to("cpu")
 
 
-#10) Conversion des donnees en tenseurs Pytorch et envoi sur le device
-X_train = th.from_numpy(X_train).float().to(device)
-y_train = th.from_numpy(y_train).float().to(device)
+# Conversion des donnees en tenseurs Pytorch et envoi sur le cpu
+X_train = th.from_numpy(X_train).float().to("cpu")
+y_train = th.from_numpy(y_train).float().to("cpu")
 y_train = y_train[:,0]
 
-X_test = th.from_numpy(X_test).float().to(device)
-y_test = th.from_numpy(y_test).float().to(device)
+X_test = th.from_numpy(X_test).float().to("cpu")
+y_test = th.from_numpy(y_test).float().to("cpu")
 y_test = y_test[:,0]
 
-#11) Taux d'apprentissage (learning rate)
-eta = 0.80
-
-#12) Definition du critere de Loss. Ici binary cross entropy pour un modele de classification avec deux classes
+# Definition du critere de Loss. Ici binary cross entropy pour un modele de classification avec deux classes
 criterion = th.nn.BCELoss()
 
-# optim.SGD Correspond a la descente de gradient standard.
-# Il existe d'autres types d'optimizer dans la librairie Pytorch
-# Le plus couramment utilise est optim.Adam
-optimizer = optim.Adadelta(nnet.parameters(), lr=eta)
-
-# tqdm permet d'avoir une barre de progression
+########################## Parametrage (optimizer, epochs...)###################
+optimizer = optim.AdamW(nnet.parameters(), lr=eta)
 nb_epochs = 4000
+maj_affichage = 10
+
 pbar = tqdm(range(nb_epochs))
 
+############################# execution ########################################
 for i in pbar:
     # Remise a zero des gradients
     optimizer.zero_grad()
 
     f_train = nnet(X_train)
     loss = criterion(f_train,y_train)
-    # Calculs des gradients
+    # Calculs des gradients & mise a jour des poids
     loss.backward()
-
-    # Mise a jour des poids du modele avec l'optimiseur choisi et en fonction des gradients calcules
     optimizer.step()
 
-    if (i % 10 == 0):
+	# maj de l'affichage
+    if (i % maj_affichage == 0):
 
         y_pred_train = prediction(f_train)
 
@@ -121,4 +109,5 @@ for i in pbar:
 
         error_test = error_rate(y_pred_test, y_test)
 
+		#affichage
         pbar.set_postfix(iter=i, loss = loss.item(), error_train=error_train.item(), error_test=error_test.item())
