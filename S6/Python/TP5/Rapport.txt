@@ -3,23 +3,43 @@ Le taux d'apprentissage à été augmenté en fonction, et l'affichage se réini
 
 1) D'abord, on doit tester differents optimizer:
 utilisation de la configuration suivante:
-	4000 epochs, 0.5 eta (car nombre d'epochs faible), reseau->51,400,200,200,50
+	4000 epochs, 0.50 eta (car nombre d'epochs faible), reseau->51,400,200,200,50
 
 	SGD:[10:46<00:00,  6.19it/s, error_test=0.342, error_train=0.285, iter=3990, loss=0.559]
 	ASGD: [10:45<00:00,  6.19it/s, error_test=0.295, error_train=0.365, iter=3990, loss=0.586]
 	Adadelta:[09:56<00:00,  6.71it/s, error_test=0.253, error_train=0.252, iter=3990, loss=0.495] <- meilleur actuel ( ~75% réussite )
 	Adagrad: [10:36<00:00,  6.29it/s, error_test=0.48, error_train=0.48, iter=3990, loss=0.692]
 	Adam: [09:25<00:00,  7.08it/s, error_test=0.505, error_train=0.474, iter=3990, loss=0.703]
-	AdamW:[17:10<00:00,  3.88it/s, error_test=0.488, error_train=0.523, iter=3990, loss=0.729] <- supposé être le meilleur, mais est le pire. Probablement cas de surapprentissage dû à l'eta élevé
+	AdamW:[17:10<00:00,  3.88it/s, error_test=0.488, error_train=0.523, iter=3990, loss=0.729] <- supposé être le meilleur, mais est l'un des pire. Probablement cas de surapprentissage dû à l'eta élevé
 
-2) puis on essaye differents eta:
+1.5) recherche de la cause du résultat de AdamW. Verification de l'eta dû au faible nombre d'epochs
 
 on fixe l'eta à 0.10 plutot que 0.50 :
-	ancien pire : AdamW: [21:07<00:00,  3.16it/s, error_test=0.491, error_train=0.476, iter=3990, loss=0.692] ( -1%)
-	ancien meilleur : Adadelta: [09:27<00:00,  7.05it/s, error_test=0.261, error_train=0.256, iter=3990, loss=0.512] ( -1% )
+	ancien pire : AdamW: [21:07<00:00,  3.16it/s, error_test=0.491, error_train=0.476, iter=3990, loss=0.692]
+	ancien meilleur : Adadelta: [09:27<00:00,  7.05it/s, error_test=0.261, error_train=0.256, iter=3990, loss=0.512]
 
-eta à 0.8:
-	ancien pire : AdamW:
-	ancien meilleur : Adadelta:[10:19<00:00,  6.46it/s, error_test=0.285, error_train=0.265, iter=3990, loss=0.512]
-eta à 0.02:
-3) puis on selectionne un reseau correct :
+eta à 0.80:
+	AdamW: [17:23<00:00,  3.83it/s, error_test=0.476, error_train=0.518, iter=3990, loss=0.693]
+	Adadelta:[10:19<00:00,  6.46it/s, error_test=0.285, error_train=0.265, iter=3990, loss=0.512]
+
+eta à 0.02, pour être sûr qu'il faut augmenter celui-ci:
+	AdamW: [14:01<00:00,  4.75it/s, error_test=0.269, error_train=0.104, iter=3990, loss=0.217]
+	Adadelta: [10:00<00:00,  6.66it/s, error_test=0.28, error_train=0.3, iter=3990, loss=0.588]
+
+	Adadelta semble avoir des résultats constant. Aprés recherche sur internet, il s'agirait du fait qu'Adadelta adapte lui-même l'eta, et que celui qu'on fixe n'est que la valeure initiale
+
+test de l'optimizer ASGD à 0.02 : [10:32<00:00,  6.32it/s, error_test=0.301, error_train=0.279, iter=3990, loss=0.565]
+
+2) puis on essaye differents eta pour l'optimizer choisi:
+	selection de AdamW. Changement des eta:
+	0.0100 : [12:37<00:00,  5.28it/s, error_test=0.231, error_train=0.108, iter=3990, loss=0.245]
+	0.0200 : [14:01<00:00,  4.75it/s, error_test=0.269, error_train=0.104, iter=3990, loss=0.217] ( rappel )
+	0.0300 : [12:33<00:00,  5.31it/s, error_test=0.238, error_train=0.166, iter=3990, loss=0.366]
+	0.0050 : [12:00<00:00,  5.55it/s, error_test=0.25, error_train=0.0627, iter=3990, loss=0.148]
+	0.0010 : [09:11<00:00,  7.26it/s, error_test=0.254, error_train=0.00543, iter=3990, loss=0.0253] test à donné :
+	0.0400 : [17:57<00:00,  3.71it/s, error_test=0.319, error_train=0.251, iter=3990, loss=0.443]
+	0.0250 : [12:44<00:00,  5.23it/s, error_test=0.228, error_train=0.105, iter=3990, loss=0.257]
+	0.0350 : [15:35<00:00,  4.28it/s, error_test=0.22, error_train=0.137, iter=3990, loss=0.307] test à donné :
+	0.0005 : [10:33<00:00,  6.31it/s, error_test=0.259, error_train=0.00838, iter=3990, loss=0.0352]
+
+3) puis on sélectionne un réseau correct :
