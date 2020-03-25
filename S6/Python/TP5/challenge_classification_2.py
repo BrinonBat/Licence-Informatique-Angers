@@ -10,6 +10,9 @@ import torch
 import pandas as pd
 import csv
 ########################### initialisation #####################################
+
+np.random.seed(0)
+
 datas=pd.get_dummies(pd.read_csv("bank_train_data.csv",sep=","))
 labels=pd.read_csv("bank_train_labels.csv")
 X=datas.values
