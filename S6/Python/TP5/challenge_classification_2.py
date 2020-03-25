@@ -8,7 +8,7 @@ import torch.optim as optim
 from torch.nn import functional as F
 import torch
 import pandas as pd
-
+import csv
 ########################### initialisation #####################################
 datas=pd.get_dummies(pd.read_csv("bank_train_data.csv",sep=","))
 labels=pd.read_csv("bank_train_labels.csv")
@@ -34,13 +34,13 @@ y_test = y[test_idx]
 ######################## Creation du reseau de neurones. #######################
 class Neural_network_binary_classif(th.nn.Module):
 
-    def __init__(self,d,h1,h2,h3,h4):
+    def __init__(self,d,h1,h2,h3):
         super(Neural_network_binary_classif, self).__init__()
 
         self.layer1 = th.nn.Linear(d, h1)
         self.layer2 = th.nn.Linear(h1, h2)
-        self.layer3 = th.nn.Linear(h3, h4)
-        self.layer4 = th.nn.Linear(h4, 1)
+        self.layer3 = th.nn.Linear(h2, h3)
+        self.layer4 = th.nn.Linear(h3, 1)
 
         self.layer1.reset_parameters()
         self.layer2.reset_parameters()
@@ -53,10 +53,10 @@ class Neural_network_binary_classif(th.nn.Module):
         phi3 = torch.sigmoid(self.layer3(phi2))
         return torch.sigmoid(self.layer4(phi3)).view(-1)
 
-nnet = Neural_network_binary_classif(d,400,200,200,50)
+nnet = Neural_network_binary_classif(d,50,50,20)
 
 # Taux d'apprentissage (learning rate)
-eta = 0.001
+eta = 0.0010
 
 ###################### chargement des donnees ##################################
 
@@ -111,3 +111,16 @@ for i in pbar:
 
 		#affichage
         pbar.set_postfix(iter=i, loss = loss.item(), error_train=error_train.item(), error_test=error_test.item())
+
+################ ecriture de predictions dans un CSV ##########################
+
+data_test=pd.get_dummies(pd.read_csv("bank_test_data.csv",sep=",")).values
+data_final = th.from_numpy(data_test).float().to("cpu")
+final_test=nnet(data_final)
+pred=prediction(final_test)
+pred=pred.detach().numpy()
+print(pred)
+with open("results_final.csv","w") as csvfile:
+	file=csv.writer(csvfile,delimiter="\n")
+	file.writerow(pred)
+csvfile.close()
