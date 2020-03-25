@@ -36,10 +36,51 @@ test de l'optimizer ASGD à 0.02 : [10:32<00:00,  6.32it/s, error_test=0.301, er
 	0.0200 : [14:01<00:00,  4.75it/s, error_test=0.269, error_train=0.104, iter=3990, loss=0.217] ( rappel )
 	0.0300 : [12:33<00:00,  5.31it/s, error_test=0.238, error_train=0.166, iter=3990, loss=0.366]
 	0.0050 : [12:00<00:00,  5.55it/s, error_test=0.25, error_train=0.0627, iter=3990, loss=0.148]
-	0.0010 : [09:11<00:00,  7.26it/s, error_test=0.254, error_train=0.00543, iter=3990, loss=0.0253] test à donné :
+	0.0010 : [09:11<00:00,  7.26it/s, error_test=0.254, error_train=0.00543, iter=3990, loss=0.0253] test à donné : 0.6816367265
 	0.0400 : [17:57<00:00,  3.71it/s, error_test=0.319, error_train=0.251, iter=3990, loss=0.443]
 	0.0250 : [12:44<00:00,  5.23it/s, error_test=0.228, error_train=0.105, iter=3990, loss=0.257]
-	0.0350 : [15:35<00:00,  4.28it/s, error_test=0.22, error_train=0.137, iter=3990, loss=0.307] test à donné :
+	0.0350 : [15:35<00:00,  4.28it/s, error_test=0.22, error_train=0.137, iter=3990, loss=0.307] test à donné : 0.6457085828343314
 	0.0005 : [10:33<00:00,  6.31it/s, error_test=0.259, error_train=0.00838, iter=3990, loss=0.0352]
+	0.0015 : [09:28<00:00,  7.04it/s, error_test=0.258, error_train=0.0126, iter=3990, loss=0.0399]
+
+on conserve l'eta 0.0010
 
 3) puis on sélectionne un réseau correct :
+constat qu'on oubli avait été fait ( layer 2 et layer 3 pas reliés, correction et poursuite des tests)
+51,400,200,200,50 [12:55<00:00,  5.16it/s, error_test=0.278, error_train=0.0351, iter=3990, loss=0.0884]
+
+essai avec quantité faible ( 3 ) de neurones de grandes valeurs
+51,400,200        [09:00<00:00,  7.40it/s, error_test=0.258, error_train=0.00682, iter=3990, loss=0.0337]
+essai avec quantité faible ( 3 ) de neurones de petites valeurs
+51,40,20        [00:30<00:00, 131.73it/s, error_test=0.23, error_train=0.0987, iter=3990, loss=0.248]
+51,100,40       [01:46<00:00, 37.71it/s, error_test=0.239, error_train=0.0386, iter=3990, loss=0.119]
+essai avec quantité faible ( 3 ) de neurones de valeurs moyennes
+51,200,100		[03:00<00:00, 22.15it/s, error_test=0.257, error_train=0.0226, iter=3990, loss=0.0697]
+
+on extrapole le meilleur cas :
+51,600,200		[12:15<00:00,  5.43it/s, error_test=0.257, error_train=0.00791, iter=3990, loss=0.0353] test precision : 0.6876247504990021
+
+essai avec quantité grande ( 8 ) de neurones de petites valeurs décroissantes puis croissantes
+51,80,70,60,50,40,30,20 [02:36<00:00, 25.49it/s, error_test=0.223, error_train=0.0817, iter=3990, loss=0.268] test precision : 0.7425149700598803
+51,20,30,40,50,60,70,80 [02:13<00:00, 29.91it/s, error_test=0.238, error_train=0.137, iter=3990, loss=0.315]
+51,50,40,35,30,20,10 [01:12<00:00, 55.27it/s, error_test=0.229, error_train=0.0738, iter=3990, loss=0.254] test : 0.686626746506986
+essai avec quantité grande ( 8 ) de neurones de grandes valeurs
+51,400,350,300,250,200,150,100 [23:04<00:00,  2.89it/s, error_test=0.268, error_train=0.0377, iter=3990, loss=0.132] test precision : 0.719560878243513
+51,300,200,200,100,100,50,20 [09:58<00:00,  6.68it/s, error_test=0.24, error_train=0.0734, iter=3990, loss=0.243] test precision : 0.7544910179640718
+
+meilleurs resultats sur les groupes finissant par des valeurs faibles. Tentatives supplémentaires
+51,400,200,200,100,50,20,2 [12:49<00:00,  5.20it/s, error_test=0.483, error_train=0.479, iter=3990, loss=0.692]
+51,400,200,200,100,50,40,20 [11:07<00:00,  5.99it/s, error_test=0.242, error_train=0.0651, iter=3990, loss=0.219] test precision : 0.7584830339321358
+51,400,200,100,50,40,20 [10:10<00:00,  6.56it/s, error_test=0.234, error_train=0.0575, iter=3990, loss=0.2] test precision : 0.7415169660678642
+
+quelques tests:
+51,100,50 [01:23<00:00, 47.91it/s, error_test=0.246, error_train=0.0385, iter=3990, loss=0.113] precision : 0.666666666666666
+51,100,20 [01:04<00:00, 61.63it/s, error_test=0.238, error_train=0.0324, iter=3990, loss=0.108] precision : 0.7095808383233533
+51,100,30 [01:15<00:00, 53.17it/s, error_test=0.238, error_train=0.0347, iter=3990, loss=0.109] precision : 0.6786427145708582
+confirmation de l'efficacité de la fin par 20 -> sans doutes car il s'agit du nombre de colonnes
+51,50,50,20 [01:01<00:00, 64.86it/s, error_test=0.233, error_train=0.0833, iter=3990, loss=0.22] Precision : 0.7325349301397206
+pour une même quantité de neurones, il vaut mieux avoir plusieurs couches ?
+51,20,20,20,20,20,20 [01:06<00:00, 60.31it/s, error_test=0.216, error_train=0.122, iter=3990, loss=0.309]  Precision : 0.7514970059880239
+51,50,50,50,50,50,20 [01:52<00:00, 35.53it/s, error_test=0.246, error_train=0.0828, iter=3990, loss=0.206] Precision : 0.7375249500998005
+quand valeurs élevées moin de precision, tentative avec valeurs faibles
+51,100,5,2,3,12,20
