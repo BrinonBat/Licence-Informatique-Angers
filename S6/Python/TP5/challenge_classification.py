@@ -37,7 +37,7 @@ y_test = y[test_idx]
 ######################## Creation du reseau de neurones. #######################
 class Neural_network_binary_classif(th.nn.Module):
 
-    def __init__(self,d,h1,h2,h3,h4,h5,h6):
+    def __init__(self,d,h1,h2,h3,h4,h5,h6,h7,h8,h9):
         super(Neural_network_binary_classif, self).__init__()
 
         self.layer1 = th.nn.Linear(d, h1)
@@ -46,7 +46,10 @@ class Neural_network_binary_classif(th.nn.Module):
         self.layer4 = th.nn.Linear(h3, h4)
         self.layer5 = th.nn.Linear(h4, h5)
         self.layer6 = th.nn.Linear(h5, h6)
-        self.layer7 = th.nn.Linear(h6, 1)
+        self.layer7 = th.nn.Linear(h6, h7)
+        self.layer8 = th.nn.Linear(h7, h8)
+        self.layer9 = th.nn.Linear(h8, h9)
+        self.layer10 = th.nn.Linear(h9, 1)
 
         self.layer1.reset_parameters()
         self.layer2.reset_parameters()
@@ -55,6 +58,9 @@ class Neural_network_binary_classif(th.nn.Module):
         self.layer5.reset_parameters()
         self.layer6.reset_parameters()
         self.layer7.reset_parameters()
+        self.layer8.reset_parameters()
+        self.layer9.reset_parameters()
+        self.layer10.reset_parameters()
 
     def forward(self, x):
         phi1 = torch.sigmoid(self.layer1(x))
@@ -63,12 +69,15 @@ class Neural_network_binary_classif(th.nn.Module):
         phi4 = torch.sigmoid(self.layer4(phi3))
         phi5 = torch.sigmoid(self.layer5(phi4))
         phi6 = torch.sigmoid(self.layer6(phi5))
-        return torch.sigmoid(self.layer7(phi6)).view(-1)
+        phi7 = torch.sigmoid(self.layer7(phi6))
+        phi8 = torch.sigmoid(self.layer8(phi7))
+        phi9 = torch.sigmoid(self.layer9(phi8))
+        return torch.sigmoid(self.layer10(phi9)).view(-1)
 
-nnet = Neural_network_binary_classif(d,100,5,2,3,12,20)
+nnet = Neural_network_binary_classif(d,8,8,8,8,8,8,4,2,20)
 
 # Taux d'apprentissage (learning rate)
-eta = 0.0010
+eta = 0.001
 
 ###################### chargement des donnees ##################################
 

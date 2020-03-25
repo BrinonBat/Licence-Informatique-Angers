@@ -1,6 +1,8 @@
 Le travail à été fait sur mon ordinateur perso, donc j'ai dû limiter à 4000 le nb d'epochs pour que la durée de chaque test soit correcte.
 Le taux d'apprentissage à été augmenté en fonction, et l'affichage se réinitialise toutes les 10 epochs.
 
+ajout d'une seed pour le random, car les résultats pouvaient différés pour deux configurations exactement differentes
+
 1) D'abord, on doit tester differents optimizer:
 utilisation de la configuration suivante:
 	4000 epochs, 0.50 eta (car nombre d'epochs faible), reseau->51,400,200,200,50
@@ -80,7 +82,44 @@ quelques tests:
 confirmation de l'efficacité de la fin par 20 -> logique, vu qu'iil s'agit du nombre de colonnes du jeu de données
 51,50,50,20 [01:01<00:00, 64.86it/s, error_test=0.233, error_train=0.0833, iter=3990, loss=0.22] Precision : 0.7325349301397206
 pour une même quantité de neurones, il vaut mieux avoir plusieurs couches ?
-51,20,20,20,20,20,20 [01:06<00:00, 60.31it/s, error_test=0.216, error_train=0.122, iter=3990, loss=0.309]  Precision : 0.7514970059880239
+51,20,20,20,20,20,20 [01:08<00:00, 58.65it/s, error_test=0.224, error_train=0.119, iter=3990, loss=0.32] Precision : 0.7315369261477046
 51,50,50,50,50,50,20 [01:52<00:00, 35.53it/s, error_test=0.246, error_train=0.0828, iter=3990, loss=0.206] Precision : 0.7375249500998005
 quand valeurs élevées moin de precision, tentative avec valeurs faibles
-51,100,5,2,3,12,20 [01:26<00:00, 46.09it/s, error_test=0.265, error_train=0.0259, iter=3990, loss=0.102] Precision : 0.5728542914171657
+51,100,5,2,3,12,20 [01:26<00:00, 46.09it/s, error_test=0.265, error_train=0.0259, iter=3990, loss=0.102] Precision : 0.5728542914171657 sans doutes car surapprentissage lors du passage de 100 neurones à 5
+
+tentative de rajouter des couches tout en augmentant le nombre de neurones ( 7 couches -> 11 couches)
+51,20,20,20,20,20,20,20,20,20,20 [02:05<00:00, 31.87it/s, error_test=0.214, error_train=0.132, iter=3990, loss=0.338] Precision : 0.7345309381237525
+diminution 1 par 1 de la quantité de couches de neurones pour trouver la " bonne taille "
+51,20,20,20,20,20,20,20,20,20 [01:07<00:00, 59.19it/s, error_test=0.208, error_train=0.131, iter=3990, loss=0.324]
+51,20,20,20,20,20,20,20,20 [01:13<00:00, 54.68it/s, error_test=0.209, error_train=0.131, iter=3990, loss=0.33]
+51,20,20,20,20,20,20,20 [00:58<00:00, 68.06it/s, error_test=0.221, error_train=0.119, iter=3990, loss=0.314]
+51,20,20,20,20,20,20 [01:08<00:00, 58.65it/s, error_test=0.224, error_train=0.119, iter=3990, loss=0.32]
+51,20,20,20,20,20 [00:42<00:00, 93.20it/s, error_test=0.215, error_train=0.128, iter=3990, loss=0.326]
+
+constat que même avec la seed, les résultats diffèrent d'une fois sur l'autre.
+
+on conserve tout de même celui avec de meilleurs résultats : 51,20,20,20,20,20,20,20,20,20 ( une couche de + diminue les résultats)
+dernier neurone softmax plutot que sigmoid ( vu sur internet), test :
+ancien résultat: [01:07<00:00, 59.19it/s, error_test=0.208, error_train=0.131, iter=3990, loss=0.324]
+nouveau résultat: [01:11<00:00, 56.08it/s, error_test=0.475, error_train=0.483, iter=3990, loss=13.3]
+ donc softmax parait inapproprié à la situation.
+
+ on augmente le nombre de neurones de chaque couche
+51,40,20,20,20,20,20,20,20,20 [01:17<00:00, 51.43it/s, error_test=0.214, error_train=0.136, iter=3990, loss=0.377]
+51,80,40,20,20,20,20,20,20,20 [01:52<00:00, 35.44it/s, error_test=0.22, error_train=0.134, iter=3990, loss=0.383]
+augmentation plus rapide
+51,200,100,200,100,100,80,51,20,20 [08:32<00:00,  7.81it/s, error_test=0.238, error_train=0.0675, iter=3990, loss=0.193] Precision : 0.652694610778443 . Precision moin bonne malgrès une meilleure loss et error_train
+diminution
+51,25,20,10,10,10,10,10,10,20 [01:17<00:00, 51.62it/s, error_test=0.205, error_train=0.128, iter=3990, loss=0.34] Precision : 0.7375249500998005
+51,10,10,10,10,10,10,10,10,20 [00:45<00:00, 87.24it/s, error_test=0.214, error_train=0.18, iter=3990, loss=0.393]
+51,10,10,10,10,10,10,10,2,20 [00:42<00:00, 95.06it/s, error_test=0.2, error_train=0.163, iter=3990, loss=0.384] Precision : 0.7684630738522954
+51,256,128,64,32,16,8,4,2,20 [06:10<00:00, 10.81it/s, error_test=0.222, error_train=0.0962, iter=3990, loss=0.292]
+51,102,128,64,32,16,8,4,2,20 [03:30<00:00, 19.03it/s, error_test=0.209, error_train=0.109, iter=3990, loss=0.319]
+résultats cohérents
+51,20,10,2,2,2,2,2,2,20  [00:50<00:00, 79.56it/s, error_test=0.215, error_train=0.132, iter=3990, loss=0.349] ( surapprentissage probable. montée du taux d'echecs sur la fin)
+51,2,2,2,2,2,2,2,2,20  [00:36<00:00, 108.82it/s, error_test=0.475, error_train=0.483, iter=3990, loss=0.693] effectivement, surapprentissage confirmé
+51,8,8,8,8,8,8,4,2,20 [00:38<00:00, 103.55it/s, error_test=0.196, error_train=0.183, iter=3990, loss=0.416]
+51,4,4,4,4,4,4,4,2,20 [00:38<00:00, 103.18it/s, error_test=0.191, error_train=0.186, iter=3990, loss=0.42]
+51,4,4,4,4,4,4,2,2,20 [00:37<00:00, 105.84it/s, error_test=0.196, error_train=0.201, iter=3990, loss=0.433]
+au final, le meilleur que j'ai pu obtenir est un error_test de 0.191 avec 51,4,4,4,4,4,4,4,2,20 et une Precision de 0.76 sur le test en ligne
+résultats  comparable à  51,10,10,10,10,10,10,10,2,20 qui a 0.77 de precision, malgrès l'error_test de 0.2 uniquement
