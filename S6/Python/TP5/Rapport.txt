@@ -83,4 +83,4 @@ pour une même quantité de neurones, il vaut mieux avoir plusieurs couches ?
 51,20,20,20,20,20,20 [01:06<00:00, 60.31it/s, error_test=0.216, error_train=0.122, iter=3990, loss=0.309]  Precision : 0.7514970059880239
 51,50,50,50,50,50,20 [01:52<00:00, 35.53it/s, error_test=0.246, error_train=0.0828, iter=3990, loss=0.206] Precision : 0.7375249500998005
 quand valeurs élevées moin de precision, tentative avec valeurs faibles
-51,100,5,2,3,12,20
+51,100,5,2,3,12,20 [01:26<00:00, 46.09it/s, error_test=0.265, error_train=0.0259, iter=3990, loss=0.102] Precision : 0.5728542914171657
