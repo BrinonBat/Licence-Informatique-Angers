@@ -52,4 +52,4 @@ tante(X,Y):-parent(T,Y),soeur(X,T).
 cousins_1(X,Y):-(oncle(X,T),pere(T,Y));(tante(X,T),mere(T,Y)).
 
 %10)
-cousins_2(X,Y):-
+%cousins_2(X,Y):-
