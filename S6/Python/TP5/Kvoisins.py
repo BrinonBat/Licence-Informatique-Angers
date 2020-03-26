@@ -35,9 +35,9 @@ print(euclidian_distance(X_train[0,:],X_train[1,:]))
 def neighbors(X_train, y_label, X_test, k):
 
     list_distances =  []
-
+    print(X_test)
     for i in range(X_train.shape[0]):
-        distance = euclidian_distance(X_train[i,:], X_test)
+    	distance = euclidian_distance(X_train[i,:],X_test[i,:])
         list_distances.append(distance)
 
     df = pd.DataFrame()
