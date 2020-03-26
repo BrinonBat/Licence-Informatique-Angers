@@ -1,3 +1,5 @@
+Le pseudo utilisé sur codalab est : bbrinon
+
 Le travail à été fait sur mon ordinateur perso, donc j'ai dû limiter à 4000 le nb d'epochs pour que la durée de chaque test soit correcte.
 Le taux d'apprentissage à été augmenté en fonction, et l'affichage se réinitialise toutes les 10 epochs.
 
@@ -123,3 +125,5 @@ résultats cohérents
 51,4,4,4,4,4,4,2,2,20 [00:37<00:00, 105.84it/s, error_test=0.196, error_train=0.201, iter=3990, loss=0.433]
 au final, le meilleur que j'ai pu obtenir est un error_test de 0.191 avec 51,4,4,4,4,4,4,4,2,20 et une Precision de 0.76 sur le test en ligne
 résultats  comparable à  51,10,10,10,10,10,10,10,2,20 qui a 0.77 de precision, malgrès l'error_test de 0.2 uniquement
+
+résultat obtenu via regression logistique : [00:07<00:00, 514.64it/s, error_test=0.321, error_train=0.322, iter=3900, loss=6.07] Precision : 0.5 ( wait, what ?)
