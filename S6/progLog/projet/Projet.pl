@@ -43,6 +43,12 @@ tri_topologique(G, O) :- \+graphevide(G), predecesseurs(S, G, []), ote_sommet(S,
 %predecesseurs2(E, graphe(S, A), Pred) :- suppr_sommets(E, S), suppr_arcs(E, A).
 %suppr_sommets(E, [E | L])
 
+fusion(T,[],T).
+fusion([],T,T).
+fusion([X|T],[Y|T_],[X|TT_]):-inf_st(X,Y),fusion(T,[Y|T_],TT_).
+fusion([X|T],[Y|T_],[Y|TT_]):-inf_st(Y,X),fusion([X|T],T_,TT_).
+fusion([X|T],[X|T_],[X,X|TT_]):-fusion(T,T_,TT_).
+
 %1) CHEMIN/4
 chemin(U, U, _G, [U]).
 chemin(U, V, G, [U | L]) :- U \= V, successeurs(U, G, SuccU), chemin_rec(G, V, SuccU, L).
@@ -66,5 +72,5 @@ cycles_II_rec(G,  [X | Som], [C | LC]) :- cycles(X, G, C), cycles_II_rec(G, Som,
 cfc(G,CFC):- cycles(G,LC),cfc_rec(G,CFC,LC).
 
 cfc_rec(G,[],[]).
-cfc_rec(G,CFC,[CY|LC]):- membre(CY,CFC),ote(LCFC,CY,CFC),cfc_rec(G,LCFC,LC).
-%cfc_rec(G,CFC,LC):-
+cfc_rec(G,CFC,[CY|LC]):- membre(CY,CFC),ote(CFC,CY,LCFC),cfc_rec(G,LCFC,LC). % cas où l'un des cycles est une CFC entiere
+cfc_rec(G,CFC,[CYA|LC]):- membre(CYB,LC),membre(X,CYA),CYA\=CYB,membre(X,CYB),fusion(CYA,CYB,CY),ote(LC,CYB,LLC), cfc_rec(G,CFC,[CY|LLC]). %cas où plusieurs cycles forment une CFC
