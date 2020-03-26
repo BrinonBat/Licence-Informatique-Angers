@@ -67,7 +67,7 @@ criterion = th.nn.BCELoss()
 ########################## Parametrage (optimizer, epochs...)###################
 
 # Taux d'apprentissage (learning rate)
-eta = 0.0010
+eta = 0.025
 
 optimizer = optim.AdamW([weights], lr=eta)
 nb_epochs = 4000

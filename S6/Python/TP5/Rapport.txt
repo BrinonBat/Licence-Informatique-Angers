@@ -126,4 +126,11 @@ résultats cohérents
 au final, le meilleur que j'ai pu obtenir est un error_test de 0.191 avec 51,4,4,4,4,4,4,4,2,20 et une Precision de 0.76 sur le test en ligne
 résultats  comparable à  51,10,10,10,10,10,10,10,2,20 qui a 0.77 de precision, malgrès l'error_test de 0.2 uniquement
 
-résultat obtenu via regression logistique : [00:07<00:00, 514.64it/s, error_test=0.321, error_train=0.322, iter=3900, loss=6.07] Precision : 0.5 ( wait, what ?)
+II - REGRESSION LOGISTIQUE
+
+résultat obtenu via regression logistique (eta 0.0010): [00:07<00:00, 514.64it/s, error_test=0.321, error_train=0.322, iter=3900, loss=6.07] Precision : 0.5 ( wait, what ?)
+résultat obtenu via regression logistique (eta 0.0100):  [00:09<00:00, 429.26it/s, error_test=0.212, error_train=0.21, iter=3900, loss=0.486]
+résultat obtenu via regression logistique (eta 0.1000):[00:07<00:00, 527.49it/s, error_test=0.242, error_train=0.217, iter=3900, loss=4.36]
+résultat obtenu via regression logistique (eta 0.0500): [00:07<00:00, 503.56it/s, error_test=0.215, error_train=0.273, iter=3900, loss=5.23]
+résultat obtenu via regression logistique (eta 0.0250): [00:14<00:00, 282.35it/s, error_test=0.304, error_train=0.299, iter=3900, loss=2.93]
+meilleur résultat à 0.01, avec un error_test de 0.212, qui est inférieur à celui du reseau de neurones
