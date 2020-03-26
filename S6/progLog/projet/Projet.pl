@@ -63,5 +63,8 @@ cycles_II_rec(_G, [], []).
 cycles_II_rec(G,  [X | Som], [C | LC]) :- cycles(X, G, C), cycles_II_rec(G, Som, LC).
 
 %4) CFC/2
-cfc(G,[]).
-cfc(G,[C|CFC]):- cycles(G,LC),
+cfc(G,CFC):- cycles(G,LC),cfc_rec(G,CFC,LC).
+
+cfc_rec(G,[],[]).
+cfc_rec(G,CFC,[CY|LC]):- membre(CY,CFC),ote(LCFC,CY,CFC),cfc_rec(G,LCFC,LC).
+%cfc_rec(G,CFC,LC):-
