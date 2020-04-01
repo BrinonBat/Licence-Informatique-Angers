@@ -8,7 +8,7 @@ DROP TYPE IF EXISTS tPersonne;
 DROP TYPE IF EXISTS tSociete;
 DROP TRIGGER IF EXISTS beforeChangeAction ON ACTION;
 DROP TRIGGER IF EXISTS afterInsertAction ON ACTION;
-
+DROP TRIGGER IF EXISTS beforeInsertAction ON ACTION
 ---------------------------- creation des types et tables-----------------------
 
 CREATE TYPE tPersonne as(
@@ -108,15 +108,14 @@ CREATE OR REPLACE FUNCTION verifDateEtUpdate() RETURNS TRIGGER AS $$
 		diffDates int=NEW.DateAct-current_date;
 	BEGIN
 		RAISE NOTICE 'date'; -- ward, permet de savoir quand le trigger est activé
-		IF TG_OP='UPDATE' THEN  RAISE EXCEPTION 'les updates sont interdits';
-			--RETURN NULL;
+		IF TG_OP='UPDATE' THEN RAISE EXCEPTION 'updates interdits';
 		ELSE
-			IF (diffDates<0) THEN
-				RAISE EXCEPTION "date non valide %-%=%",NEW.DateAct,current_date,diffDates;
-				--RETURN NULL;
+			IF (diffDates<0) THEN RAISE EXCEPTION 'dates érronées';
 			END IF;
 		END IF;
 		RETURN NEW;
+	EXCEPTION WHEN RAISE_EXCEPTION
+   		THEN RETURN NULL;
 	END;
 $$ LANGUAGE 'plpgsql';
 
@@ -124,14 +123,37 @@ $$ LANGUAGE 'plpgsql';
 CREATE TRIGGER beforeChangeAction BEFORE INSERT OR UPDATE ON ACTION
 FOR EACH ROW EXECUTE PROCEDURE verifDateEtUpdate();
 
+CREATE OR REPLACE FUNCTION verifNbAction() RETURNS TRIGGER AS $$
+	BEGIN
+		RAISE NOTICE 'quantity'; -- ward, permet de savoir quand le trigger est activé
+		--RAISE NOTICE '%',COALESCE((SELECT H.NbrActTotal FROM HISTO_An_ACTIONNAIRE H WHERE NEW.Personne=H.Personne and EXTRACT(year FROM NEW.DateAct)=H.Annee),0)+NEW.NbrAct;
+		IF (COALESCE((SELECT H.NbrActTotal FROM HISTO_An_ACTIONNAIRE H WHERE NEW.Personne=H.Personne and EXTRACT(year FROM NEW.DateAct)=H.Annee),0)+NEW.NbrAct) <=3
+			THEN RETURN NEW;
+			ELSE RAISE EXCEPTION 'quantité limite atteinte';
+		END IF;
+	EXCEPTION WHEN RAISE_EXCEPTION
+   		THEN RETURN NULL;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE TRIGGER beforeInsertAction BEFORE INSERT ON ACTION
+FOR EACH ROW EXECUTE PROCEDURE verifNbAction();
 ---------------------------------- tests ---------------------------------------
 
 INSERT INTO ACTION VALUES
 	((SELECT P FROM PERSONNE P WHERE P.NumSecu=001),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Le Renouveau Allemand'),'1988-07-4',5,'vente'),
-	((SELECT P FROM PERSONNE P WHERE P.NumSecu=001),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Le Renouveau Allemand'),'2027-05-21',4,'achat'),
-	((SELECT P FROM PERSONNE P WHERE P.NumSecu=001),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Le Renouveau Allemand'),'2027-08-10',1,'achat'),
+	((SELECT P FROM PERSONNE P WHERE P.NumSecu=001),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Le Renouveau Allemand'),'2027-05-21',3,'achat'),
+	((SELECT P FROM PERSONNE P WHERE P.NumSecu=003),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Le Renouveau Allemand'),'2027-08-10',2,'achat'),
+	((SELECT P FROM PERSONNE P WHERE P.NumSecu=003),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Les Nouvelles Pensees'),'2027-08-10',1,'achat'),
+	((SELECT P FROM PERSONNE P WHERE P.NumSecu=004),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Les Nouvelles Pensees'),'2027-08-09',1,'achat'),
+	((SELECT P FROM PERSONNE P WHERE P.NumSecu=004),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Les Nouvelles Pensees'),'2027-08-10',1,'achat'),
+	((SELECT P FROM PERSONNE P WHERE P.NumSecu=004),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Les Nouvelles Pensees'),'2027-08-11',1,'vente'),
 	((SELECT P FROM PERSONNE P WHERE P.NumSecu=001),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Le Renouveau Allemand'),'2022-08-10',2,'vente'),
 	((SELECT P FROM PERSONNE P WHERE P.NumSecu=001),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Le Renouveau Allemand'),'1998-05-22',8,'achat');
+
+INSERT INTO ACTION VALUES
+	((SELECT P FROM PERSONNE P WHERE P.NumSecu=004),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Les Nouvelles Pensees'),'2027-08-13',1,'achat'),
+	((SELECT P FROM PERSONNE P WHERE P.NumSecu=002),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Les Nouvelles Pensees'),'2021-12-28',4,'achat');
 
 UPDATE ACTION
 	SET NbrAct=0 WHERE NbrAct>0;
