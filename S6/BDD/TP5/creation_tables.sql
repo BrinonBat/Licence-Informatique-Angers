@@ -6,9 +6,11 @@ DROP TABLE IF EXISTS ACTION;
 DROP TABLE IF EXISTS HISTO_An_ACTIONNAIRE;
 DROP TYPE IF EXISTS tPersonne;
 DROP TYPE IF EXISTS tSociete;
-DROP TRIGGER IF EXISTS afterChangeAction ON ACTION;
+DROP TRIGGER IF EXISTS beforeChangeAction ON ACTION;
 DROP TRIGGER IF EXISTS afterInsertAction ON ACTION;
--- creation des types et tables
+
+---------------------------- creation des types et tables-----------------------
+
 CREATE TYPE tPersonne as(
 	NumSecu int,
 	Nom varchar(20),
@@ -53,7 +55,8 @@ CREATE TABLE HISTO_An_ACTIONNAIRE(
 	primary key(Personne,Societe,Annee)
 );
 
--- remplissage des tables
+------------------------------ remplissage des tables---------------------------
+
 INSERT INTO PERSONNE VALUES
 	(001,'Nietzsche','Friedrich','h','1844-10-15'),
 	(002,'Marx','Karl','h','1818-05-05'),
@@ -73,9 +76,11 @@ INSERT INTO SALARIE VALUES
 	((SELECT P FROM PERSONNE P WHERE P.NumSecu= 004),(SELECT S FROM SOCIETE S WHERE S.NomSoc='Les Nouvelles Pensees'),5000);
 
 
--- creation de triggers
+----------------------- creation de triggers -----------------------------------
+
 CREATE OR REPLACE FUNCTION majHistoActionnaire() RETURNS TRIGGER AS $$
 	BEGIN
+		RAISE NOTICE 'modif histo'; -- ward, permet de savoir quand le trigger est activé
 		/* creation du nuplet s'il n'est pas present dans la BDD */
 		IF NOT EXISTS(SELECT * FROM HISTO_An_ACTIONNAIRE WHERE Societe=NEW.Societe and Personne=NEW.Personne and Annee=EXTRACT(year FROM NEW.DateAct))
 			THEN INSERT INTO HISTO_An_ACTIONNAIRE VALUES(NEW.Personne,NEW.Societe,EXTRACT(year FROM NEW.DateAct),0,0,0);
@@ -89,7 +94,7 @@ CREATE OR REPLACE FUNCTION majHistoActionnaire() RETURNS TRIGGER AS $$
 			UPDATE HISTO_An_ACTIONNAIRE
 				SET NbrActTotal=NbrActTotal+NEW.NbrAct, NbrVente=NbrVente+NEW.NbrAct
 				WHERE Societe=NEW.Societe and Personne=NEW.Personne and  Annee=EXTRACT(year FROM NEW.DateAct);
-		ELSE RAISE NOTICE 'erreur lors de la maj de HISTO_An_ACTIONNAIRE';
+		ELSE RAISE EXCEPTION 'erreur lors de la maj de HISTO_An_ACTIONNAIRE';
 		END IF;
 		RETURN NEW;
 	END;
@@ -102,10 +107,13 @@ CREATE OR REPLACE FUNCTION verifDateEtUpdate() RETURNS TRIGGER AS $$
 	DECLARE
 		diffDates int=NEW.DateAct-current_date;
 	BEGIN
-		IF TG_OP='UPDATE' THEN RAISE EXCEPTION 'les updates sont interdits';
+		RAISE NOTICE 'date'; -- ward, permet de savoir quand le trigger est activé
+		IF TG_OP='UPDATE' THEN  RAISE EXCEPTION 'les updates sont interdits';
+			--RETURN NULL;
 		ELSE
 			IF (diffDates<0) THEN
-				RAISE EXCEPTION 'date non valide %-%=%',NEW.DateAct,current_date,diffDates;
+				RAISE EXCEPTION "date non valide %-%=%",NEW.DateAct,current_date,diffDates;
+				--RETURN NULL;
 			END IF;
 		END IF;
 		RETURN NEW;
@@ -113,13 +121,18 @@ CREATE OR REPLACE FUNCTION verifDateEtUpdate() RETURNS TRIGGER AS $$
 $$ LANGUAGE 'plpgsql';
 
 
-CREATE TRIGGER beforeChangeAction AFTER INSERT OR UPDATE ON ACTION
+CREATE TRIGGER beforeChangeAction BEFORE INSERT OR UPDATE ON ACTION
 FOR EACH ROW EXECUTE PROCEDURE verifDateEtUpdate();
 
--- tests
+---------------------------------- tests ---------------------------------------
+
 INSERT INTO ACTION VALUES
-	((SELECT P FROM PERSONNE P WHERE P.NumSecu=001),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Le Renouveau Allemand'),'1998-05-22',8,'achat'),
+	((SELECT P FROM PERSONNE P WHERE P.NumSecu=001),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Le Renouveau Allemand'),'1988-07-4',5,'vente'),
 	((SELECT P FROM PERSONNE P WHERE P.NumSecu=001),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Le Renouveau Allemand'),'2027-05-21',4,'achat'),
-	((SELECT P FROM PERSONNE P WHERE P.NumSecu=001),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Le Renouveau Allemand'),'2027-08-10',1,'achat');
+	((SELECT P FROM PERSONNE P WHERE P.NumSecu=001),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Le Renouveau Allemand'),'2027-08-10',1,'achat'),
+	((SELECT P FROM PERSONNE P WHERE P.NumSecu=001),(SELECT S FROM SOCIETE S WHERE S.NOMSOC='Le Renouveau Allemand'),'1998-05-22',8,'achat');
+
+UPDATE ACTION
+	SET NbrAct=0 WHERE NbrAct>0;
 
 SELECT * FROM HISTO_An_ACTIONNAIRE;
