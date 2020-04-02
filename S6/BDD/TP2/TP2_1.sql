@@ -1,40 +1,46 @@
-/* création et remplissage des tables produit */
-DROP TABLE IF EXISTS produit ;
-
-CREATE TABLE produit (
-	NumProd INT NOT NULL,
-	PRIMARY KEY(NumProd),
-	Designation VARCHAR(50),
-	Prix FLOAT
+-- reinitialisation
+DROP TABLE IF EXISTS PRODUIT;
+DROP TABLE IF EXISTS PRODUIT2;
+---------------------- creation et remplissage des tables ----------------------
+CREATE TABLE PRODUIT (
+	NumProd int,
+	primary key(NumProd),
+	Designation varchar(50),
+	Prix float
 );
 
-DROP TABLE IF EXISTS produit2;
-	
-CREATE TABLE produit2 (NumProd INT NOT NULL,
-	PRIMARY KEY(NumProd),
-	Designation VARCHAR(50),
-	Prix INT NOT NULL
+CREATE TABLE PRODUIT2 (
+	NumProd int,
+	primary key(NumProd),
+	Designation varchar(50),
+	Prix int
 );
 
-insert into produit values (1,'une bonne moyenne',100),(2,'alibaba',NULL);
+INSERT INTO PRODUIT VALUES
+	(1,'une bonne moyenne',100),
+	(2,'alibaba',NULL);
 
-/* fonction créant la table produit2 à partir de produit */
-CREATE OR REPLACE FUNCTION construP2() returns void AS $$
+-------------------------------- fonctions -------------------------------------
+
+/* fonction créant la table PRODUIT2 à partir de PRODUIT */
+CREATE OR REPLACE FUNCTION construProd2() returns void AS $$
 	DECLARE
-		cursdate cursor FOR SELECT * FROM produit;
+		cursdate cursor for SELECT * FROM PRODUIT;
 	BEGIN
-		IF EXISTS(SELECT * FROM produit) THEN 
-				FOR val IN cursdate LOOP
-					IF val.Prix IS NULL THEN val.Prix=0; END IF;
-					INSERT INTO produit2 VALUES(
+		IF EXISTS(SELECT * FROM PRODUIT) THEN
+				FOR val in cursdate LOOP
+					IF val.Prix IS NULL
+						THEN val.Prix=0;
+					END IF;
+					INSERT INTO PRODUIT2 VALUES(
 						val.NumProd,
 						UPPER(val.Designation),
 						ROUND(val.Prix*(1/6.55957))
-						);
+					);
 				END LOOP;
 
-		 ELSE 
-			INSERT INTO produit2 VALUES (0,'Pas de produit',NULL);
+		 ELSE
+			INSERT INTO PRODUIT2 VALUES (0,'Pas de PRODUIT',NULL);
 		 END IF;
 	END;
 $$ LANGUAGE 'plpgsql';

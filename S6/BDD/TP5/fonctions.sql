@@ -26,8 +26,8 @@ $$ LANGUAGE 'plpgsql';
 CREATE OR REPLACE FUNCTION actioSalarie() RETURNS TABLE(nom varchar(40),an int) AS $$
 	BEGIN
 	RETURN QUERY(
-		SELECT DISTINCT (H.Societe).NomSoc,H.Annee
-			FROM HISTO_An_ACTIONNAIRE H EXCEPT (SELECT NomSoc,Annee FROM -- on récupère tous les actionnaires, sauf ceux d'un couple societe-annee ayant des actionnaires non-salariés
+		SELECT DISTINCT (H.Societe).NomSoc,H.Annee FROM HISTO_An_ACTIONNAIRE H EXCEPT -- on récupère tous les actionnaires,
+			(SELECT NomSoc,Annee FROM  -- sauf ceux d'un couple societe-annee ayant des actionnaires non-salariés.
 				(SELECT H.Personne,(H.Societe).NomSoc,Annee FROM HISTO_An_ACTIONNAIRE H EXCEPT -- on conserve les actionnaires non-salariées
 					(SELECT H.Personne,(H.Societe).NomSoc,Annee FROM HISTO_An_ACTIONNAIRE H NATURAL JOIN SALARIE) -- on récupére les salariés actionnaire
 				)TMP
