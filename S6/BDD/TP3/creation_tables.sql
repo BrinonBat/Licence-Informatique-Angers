@@ -91,3 +91,60 @@ INSERT INTO TABNOTE VALUES
 	(4,'programmation','l3info',16),
 	(4,'assembleur','l3info',15),
 	(4,'scripts','l3info',12);
+
+----------------------- creation de triggers -----------------------------------
+/*met à jour les données quand un étudiant se désinscrit*/
+CREATE OR REPLACE FUNCTION deleteNote() RETURNS TRIGGER AS $$
+	BEGIN
+		DELETE FROM TABNOTE WHERE NumEtud=OLD.NumEt;
+		PERFORM stat_form(); -- maj des stats
+		RETURN OLD;
+	END;
+$$LANGUAGE 'plpgsql';
+
+CREATE TRIGGER afterDeleteEtudiant AFTER DELETE ON ETUDIANT
+FOR EACH ROW EXECUTE PROCEDURE deleteNote();
+
+/*met à jour les stats quand une note est modifiée*/
+CREATE OR REPLACE FUNCTION actualiseNote() RETURNS TRIGGER AS $$
+	BEGIN
+		PERFORM stat_form(); -- maj des stats
+		IF(TG_OP='DELETE')
+			THEN RETURN OLD;
+			ELSE RETURN NEW;
+		END IF;
+	END;
+$$LANGUAGE 'plpgsql';
+
+CREATE TRIGGER afterChangeTabnote AFTER DELETE OR UPDATE OR INSERT ON TABNOTE
+FOR EACH ROW EXECUTE PROCEDURE actualiseNote();
+
+/*met à jour les stats quand une formation est modifiée*/
+CREATE OR REPLACE FUNCTION actualiseForm() RETURNS TRIGGER AS $$
+	BEGIN
+		IF(TG_OP='DELETE') THEN
+			DELETE FROM MATIERE WHERE nomForm=OLD.NomForm;
+			PERFORM stat_form(); -- maj des stats
+			RETURN OLD;
+		ELSE
+			PERFORM stat_form(); -- maj des stats
+			RETURN NEW;
+		END IF;
+	END;
+$$LANGUAGE 'plpgsql';
+
+CREATE TRIGGER afterChangeFormation AFTER DELETE OR UPDATE OR INSERT ON FORMATION
+FOR EACH ROW EXECUTE PROCEDURE actualiseForm();
+
+------------------------------- test des triggers ------------------------------
+SELECT * FROM STAT_RESULTAT;
+DELETE FROM ETUDIANT WHERE NumEt=3;
+SELECT * FROM STAT_RESULTAT;
+
+UPDATE TABNOTE SET Note=0 WHERE NumEtud=4 and NomMat='assembleur';
+SELECT * FROM STAT_RESULTAT;
+
+INSERT INTO FORMATION VALUES ('M1info',1,1);
+SELECT * FROM STAT_RESULTAT;
+DELETE FROM FORMATION WHERE NomForm='l3info';
+SELECT * FROM STAT_RESULTAT;
