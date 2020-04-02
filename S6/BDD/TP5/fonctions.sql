@@ -1,4 +1,5 @@
 -------------------------------- fonctions -------------------------------------
+
 --Q5
 CREATE OR REPLACE FUNCTION anneesPertes(soci tSociete) RETURNS setof int AS $$
 	DECLARE
@@ -22,18 +23,19 @@ CREATE OR REPLACE FUNCTION nonActionnaires() RETURNS int AS $$
 $$ LANGUAGE 'plpgsql';
 
 --Q7
-/*
 CREATE OR REPLACE FUNCTION actioSalarie() RETURNS TABLE(nom varchar(40),an int) AS $$
 	BEGIN
-		RETURN QUERY(
-			SELECT DISTINCT (H.Societe).NomSoc,H.Annee FROM HISTO_An_ACTIONNAIRE H
-		EXCEPT
-		(SELECT DISTINCT (R.Societe).NomSoc,R.Annee FROM
-		(SELECT * FROM HISTO_An_ACTIONNAIRE H LEFT OUTER JOIN SALARIE S ON H.Societe=S.Societe and H.Personne=S.Personne)R WHERE R.Salaire IS NULL)
+	RETURN QUERY(
+		SELECT DISTINCT (H.Societe).NomSoc,H.Annee
+			FROM HISTO_An_ACTIONNAIRE H EXCEPT (SELECT NomSoc,Annee FROM -- on récupère tous les actionnaires, sauf ceux d'un couple societe-annee ayant des actionnaires non-salariés
+				(SELECT H.Personne,(H.Societe).NomSoc,Annee FROM HISTO_An_ACTIONNAIRE H EXCEPT -- on conserve les actionnaires non-salariées
+					(SELECT H.Personne,(H.Societe).NomSoc,Annee FROM HISTO_An_ACTIONNAIRE H NATURAL JOIN SALARIE) -- on récupére les salariés actionnaire
+				)TMP
+			)
 		);
 	END;
 $$LANGUAGE 'plpgsql';
-*/
+
 --Q8
 CREATE OR REPLACE FUNCTION plusActive(soci tSociete) RETURNS int AS $$
 	DECLARE
@@ -80,8 +82,15 @@ CREATE OR REPLACE FUNCTION meilleurActio(an int) RETURNS setof tPersonne AS $$
 		END LOOP;
 	END;
 $$LANGUAGE 'plpgsql';
+
 ------------------------------------- tests ------------------------------------
+
 SELECT anneesPertes((SELECT S FROM SOCIETE S WHERE S.NomSoc='Le Renouveau Allemand')); -- resultat attendu: 2022
+
 SELECT(nonActionnaires()); -- résultat attendu: 1 ( c'est Karl Marx )
+
+SELECT * FROM actioSalarie(); -- résultat attendu : ("Le Renouveau Allemand",2022 et "Les Nouvelles Pensees",2027)
+
 SELECT plusActive((SELECT S FROM SOCIETE S WHERE S.NomSoc='Le Renouveau Allemand')); -- resultat attendu: 2027
+
 SELECT meilleurActio(2027); -- résultat attendu: Nietzsche,Gustave le bon, Freud
