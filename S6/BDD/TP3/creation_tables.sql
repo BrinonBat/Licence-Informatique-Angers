@@ -1,3 +1,4 @@
+-- réinitialisation
 DROP TABLE STAT_RESULTAT;
 DROP TABLE TABNOTE;
 DROP TABLE MATIERE;
@@ -5,22 +6,25 @@ DROP TABLE FORMATION;
 DROP TABLE ENSEIGNANT;
 DROP TABLE ETUDIANT;
 
-
+---------------------------- creation des tables -------------------------------
 CREATE TABLE IF NOT EXISTS ETUDIANT(
-	NumEt int primary key,
+	NumEt int,
+	primary key(NumEt),
 	Nom varchar(20),
 	Prenom varchar(20)
 );
 
 CREATE TABLE IF NOT EXISTS ENSEIGNANT(
-	NumEns int primary key,
+	NumEns int,
+	primary key(NumEns),
 	NomEns varchar(20),
 	PrenomEns varchar(20)
 );
 
 
 CREATE TABLE IF NOT EXISTS FORMATION(
-	NomForm varchar(20) primary key,
+	NomForm varchar(20),
+	primary key(NomForm),
 	NbrEtud int,
 	EnseigResponsable int,
 	foreign key(EnseigResponsable) references ENSEIGNANT(NumEns) on delete cascade
@@ -54,6 +58,8 @@ CREATE TABLE IF NOT EXISTS STAT_RESULTAT(
 	NoteMax int,
 	NoteMin int
 );
+
+--------------------------- remplissage des tables -----------------------------
 
 INSERT INTO ETUDIANT VALUES
 	(1,'Delepine','Pierre-Yves'),
