@@ -62,6 +62,7 @@ INSERT INTO VOL VALUES
 
 -------------------------------- fonctions -------------------------------------
 
+/* changement de la vitesse d'un certain multiplicateur pour un avion donné*/
 CREATE OR REPLACE FUNCTION changeVit(numAvions int, multipl float) RETURNS void AS $$
 	DECLARE
 		liVols cursor for SELECT * FROM VOL;

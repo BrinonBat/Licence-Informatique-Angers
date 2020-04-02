@@ -1,6 +1,7 @@
 -------------------------------- fonctions -------------------------------------
 
 --Q5
+/*Retourne la liste des années durant lesquelles il y à eu + de ventes que d'achat*/
 CREATE OR REPLACE FUNCTION anneesPertes(soci tSociete) RETURNS setof int AS $$
 	DECLARE
 		annees cursor for SELECT H.Annee FROM  HISTO_An_ACTIONNAIRE H WHERE H.NbrAchat<H.NbrVente and H.Societe=soci;
@@ -13,6 +14,7 @@ CREATE OR REPLACE FUNCTION anneesPertes(soci tSociete) RETURNS setof int AS $$
 $$ LANGUAGE 'plpgsql';
 
 --Q6
+/*retourne la quantité de personnes qui ne sont pas actionnaires*/
 CREATE OR REPLACE FUNCTION nonActionnaires() RETURNS int AS $$
 	DECLARE
 		nbPers int=(SELECT COUNT(NumSecu) FROM PERSONNE);
@@ -23,6 +25,7 @@ CREATE OR REPLACE FUNCTION nonActionnaires() RETURNS int AS $$
 $$ LANGUAGE 'plpgsql';
 
 --Q7
+/*Retourne les societe et années durant lesquels les seuls actionnaires sont les salariés*/
 CREATE OR REPLACE FUNCTION actioSalarie() RETURNS TABLE(nom varchar(40),an int) AS $$
 	BEGIN
 	RETURN QUERY(
@@ -37,6 +40,7 @@ CREATE OR REPLACE FUNCTION actioSalarie() RETURNS TABLE(nom varchar(40),an int) 
 $$LANGUAGE 'plpgsql';
 
 --Q8
+/* Retourne les années ou le plus de salariés de la société indiquée sont actionnaires*/
 CREATE OR REPLACE FUNCTION plusActive(soci tSociete) RETURNS int AS $$
 	DECLARE
 		liAns cursor FOR SELECT DISTINCT Annee FROM HISTO_An_ACTIONNAIRE WHERE Societe=soci;
@@ -56,6 +60,7 @@ CREATE OR REPLACE FUNCTION plusActive(soci tSociete) RETURNS int AS $$
 $$LANGUAGE 'plpgsql';
 
 --Q9
+/*Indique le meilleur Actionnaire pour une année donnée*/
 CREATE OR REPLACE FUNCTION meilleurActio(an int) RETURNS setof tPersonne AS $$
 	DECLARE
 		historique cursor for SELECT * FROM HISTO_An_ACTIONNAIRE WHERE Annee=an;

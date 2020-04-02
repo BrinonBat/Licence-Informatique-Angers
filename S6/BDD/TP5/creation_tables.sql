@@ -77,7 +77,7 @@ INSERT INTO SALARIE VALUES
 
 
 ----------------------- creation de triggers -----------------------------------
-
+/*mise à jour de HISTO_An_ACTIONNAIRE quand ACTION a une insertion*/
 CREATE OR REPLACE FUNCTION majHistoActionnaire() RETURNS TRIGGER AS $$
 	BEGIN
 		RAISE NOTICE 'modif histo'; -- ward, permet de savoir quand le trigger est activé
@@ -103,6 +103,7 @@ $$ LANGUAGE 'plpgsql';
 CREATE TRIGGER afterInsertAction AFTER INSERT ON ACTION
 FOR EACH ROW EXECUTE PROCEDURE majHistoActionnaire();
 
+/*Verification que la date est correcte en cas d'INSERT et interdiction d'UPDATE*/
 CREATE OR REPLACE FUNCTION verifDateEtUpdate() RETURNS TRIGGER AS $$
 	DECLARE
 		diffDates int=NEW.DateAct-current_date;
@@ -123,10 +124,10 @@ $$ LANGUAGE 'plpgsql';
 CREATE TRIGGER beforeChangeAction BEFORE INSERT OR UPDATE ON ACTION
 FOR EACH ROW EXECUTE PROCEDURE verifDateEtUpdate();
 
+/*Avant une insertion dans ACTION, verifie le nombre d'actions de l'actionnaire*/
 CREATE OR REPLACE FUNCTION verifNbAction() RETURNS TRIGGER AS $$
 	BEGIN
 		RAISE NOTICE 'quantity'; -- ward, permet de savoir quand le trigger est activé
-		--RAISE NOTICE '%',COALESCE((SELECT H.NbrActTotal FROM HISTO_An_ACTIONNAIRE H WHERE NEW.Personne=H.Personne and EXTRACT(year FROM NEW.DateAct)=H.Annee),0)+NEW.NbrAct;
 		IF (COALESCE((SELECT H.NbrActTotal FROM HISTO_An_ACTIONNAIRE H WHERE NEW.Personne=H.Personne and EXTRACT(year FROM NEW.DateAct)=H.Annee),0)+NEW.NbrAct) <=3
 			THEN RETURN NEW;
 			ELSE RAISE EXCEPTION 'quantité limite atteinte';
