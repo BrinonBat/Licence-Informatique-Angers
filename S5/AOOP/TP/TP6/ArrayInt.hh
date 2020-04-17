@@ -17,7 +17,7 @@ class ArrayInt{
 		std::vector<int> contenu;
 		signed int imin;
 		signed int imax;
-}
+};
 
 class ExceptionArrayInt: public std::exception{
 	public:
@@ -27,6 +27,6 @@ class ExceptionArrayInt: public std::exception{
 	private:
 		std::string message;
 		ArrayInt::indice ind;
-}
+};
 
 std::ostream & operator==(,std::ostream & os,ArrayInt const & a);
